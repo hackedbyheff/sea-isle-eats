@@ -1,0 +1,29 @@
+import { DISCLAIMER, GITHUB_REPO_URL } from "@/lib/config";
+
+export function Footer() {
+  return (
+    <footer className="grain border-t-2 border-ink mt-6">
+      <div className="mx-auto max-w-5xl px-5 py-8">
+        <p className="max-w-2xl text-sm text-ink/70 font-light">{DISCLAIMER}</p>
+        <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium">
+          <a
+            href={GITHUB_REPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-ink hover:text-coral"
+          >
+            Open source on GitHub
+          </a>
+          <a
+            href={`${GITHUB_REPO_URL}/issues/new`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-ink hover:text-coral"
+          >
+            Suggest a change
+          </a>
+        </div>
+      </div>
+    </footer>
+  );
+}

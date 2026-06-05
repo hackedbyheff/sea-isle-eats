@@ -1,0 +1,7 @@
+# Netlify deploy config. The official Next.js runtime handles SSR, the API
+# routes (/api/admin/sync), and the auth middleware automatically.
+[build]
+  command = "next build"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

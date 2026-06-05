@@ -1,0 +1,188 @@
+import type { Hours, HoursRange, Restaurant } from "./types";
+
+/**
+ * SAMPLE / PLACEHOLDER data for verifying the UI before Supabase is connected.
+ * These do NOT represent real businesses' actual hours, payment, or ordering
+ * policies. The site falls back to this only when no live published rows exist.
+ */
+
+/** Same ranges every day of the week. */
+function everyDay(ranges: HoursRange[]): Hours {
+  return Array.from({ length: 7 }, (_, day) => ({ day, ranges }));
+}
+
+/** Build a week, then override specific days (e.g. closed Tuesdays). */
+function week(ranges: HoursRange[], overrides: Record<number, HoursRange[]> = {}): Hours {
+  return Array.from({ length: 7 }, (_, day) => ({
+    day,
+    ranges: overrides[day] ?? ranges,
+  }));
+}
+
+const NOW = "2026-06-01T00:00:00.000Z";
+
+function make(partial: Partial<Restaurant> & Pick<Restaurant, "id" | "name">): Restaurant {
+  return {
+    google_place_id: null,
+    cuisine: null,
+    price_level: null,
+    rating: null,
+    phone: null,
+    address: null,
+    lat: null,
+    lng: null,
+    hours: null,
+    accepts_cash: true,
+    accepts_cards: null,
+    online_ordering: false,
+    menu_url: null,
+    order_url: null,
+    description: null,
+    notes: null,
+    status: "verified",
+    published: true,
+    featured: false,
+    locked_fields: [],
+    last_verified_at: NOW,
+    created_at: NOW,
+    updated_at: NOW,
+    ...partial,
+  };
+}
+
+export const SAMPLE_RESTAURANTS: Restaurant[] = [
+  make({
+    id: "sample-1",
+    name: "The Dunes Grille",
+    cuisine: "American",
+    price_level: 2,
+    rating: 4.5,
+    phone: "(609) 555-0142",
+    address: "4200 Landis Ave, Sea Isle City, NJ",
+    description: "Boardwalk burgers, BYOB, big back deck.",
+    accepts_cash: true,
+    accepts_cards: true,
+    online_ordering: true,
+    menu_url: "https://example.com/dunes-grille-menu",
+    order_url: "https://example.com/dunes-grille-order",
+    hours: everyDay([["11:00", "22:00"]]),
+  }),
+  make({
+    id: "sample-2",
+    name: "Marina Raw Bar",
+    cuisine: "Seafood",
+    price_level: 3,
+    rating: 4.7,
+    phone: "(609) 555-0188",
+    address: "100 Harbor Dr, Sea Isle City, NJ",
+    description: "Oysters, lobster rolls, sunset cocktails.",
+    accepts_cash: false,
+    accepts_cards: true,
+    online_ordering: true,
+    menu_url: "https://example.com/marina-raw-bar-menu",
+    order_url: "https://example.com/marina-raw-bar-order",
+    featured: true, // sponsored — sorts first
+    hours: everyDay([["12:00", "23:00"]]),
+  }),
+  make({
+    id: "sample-3",
+    name: "Nonna's Slice Shop",
+    cuisine: "Pizza",
+    price_level: 1,
+    rating: 4.3,
+    phone: "(609) 555-0119",
+    address: "63rd St & Landis Ave, Sea Isle City, NJ",
+    description: "Cash-only corner slices since '78.",
+    accepts_cash: true,
+    accepts_cards: false,
+    online_ordering: false,
+    menu_url: "https://example.com/nonnas-menu",
+    hours: everyDay([["11:00", "21:00"]]),
+    status: "needs_call",
+    published: false,
+    notes: "Heard they're cash-only — confirm before publishing.",
+  }),
+  make({
+    id: "sample-4",
+    name: "Sandbar Tacos",
+    cuisine: "Mexican",
+    price_level: 2,
+    rating: 4.6,
+    phone: "(609) 555-0166",
+    address: "40th St Beach, Sea Isle City, NJ",
+    description: "Fish tacos, frozen margs, beach vibes.",
+    accepts_cash: true,
+    accepts_cards: true,
+    online_ordering: true,
+    menu_url: "https://example.com/sandbar-tacos-menu",
+    order_url: "https://example.com/sandbar-tacos-order",
+    hours: everyDay([["11:00", "22:00"]]),
+  }),
+  make({
+    id: "sample-5",
+    name: "Beachcomber Café",
+    cuisine: "Breakfast",
+    price_level: 2,
+    rating: 4.4,
+    phone: "(609) 555-0102",
+    address: "2900 Landis Ave, Sea Isle City, NJ",
+    description: "Crab benedict and bottomless coffee. Closed Tuesdays.",
+    accepts_cash: true,
+    accepts_cards: true,
+    online_ordering: false,
+    menu_url: "https://example.com/beachcomber-menu",
+    // closed Tuesday (day 2 has no ranges)
+    hours: week([["07:00", "14:00"]], { 2: [] }),
+    status: "unverified",
+    published: false,
+    notes: "From Google Places — not yet called.",
+  }),
+  make({
+    id: "sample-6",
+    name: "The Salty Scoop",
+    cuisine: "Dessert",
+    price_level: 1,
+    rating: 4.8,
+    phone: "(609) 555-0177",
+    address: "Promenade & 44th St, Sea Isle City, NJ",
+    description: "Homemade ice cream, water-ice, cash window. Open late.",
+    accepts_cash: true,
+    accepts_cards: false,
+    online_ordering: false,
+    hours: everyDay([["13:00", "23:00"]]),
+    status: "unverified",
+    published: false,
+  }),
+  make({
+    id: "sample-7",
+    name: "Harborlight Sushi",
+    cuisine: "Sushi",
+    price_level: 3,
+    rating: 4.5,
+    phone: "(609) 555-0155",
+    address: "86th St & Landis Ave, Sea Isle City, NJ",
+    description: "Omakase counter + online pickup orders. Lunch & dinner.",
+    accepts_cash: false,
+    accepts_cards: true,
+    online_ordering: true,
+    menu_url: "https://example.com/harborlight-menu",
+    order_url: "https://example.com/harborlight-order",
+    // lunch/dinner gap, demonstrates multiple ranges per day
+    hours: everyDay([["11:30", "14:00"], ["16:00", "22:00"]]),
+  }),
+  make({
+    id: "sample-8",
+    name: "Pier 9 Clam Bar",
+    cuisine: "Seafood",
+    price_level: 2,
+    rating: 4.2,
+    phone: "(609) 555-0133",
+    address: "9th St Bayfront, Sea Isle City, NJ",
+    description: "Steamers, fried clams, picnic tables.",
+    accepts_cash: true,
+    accepts_cards: true,
+    online_ordering: false,
+    menu_url: "https://example.com/pier9-menu",
+    hours: everyDay([["12:00", "21:00"]]),
+  }),
+];
