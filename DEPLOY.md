@@ -1,77 +1,97 @@
-# Deploying Sea Isle Eats
+# Go Live — Netlify + Supabase + Google Sheet (VA)
 
-Target: **Vercel**, custom domain **siceats.com** (reserved at GoDaddy).
+Your stack: **Supabase** (database, already holds 51 listings), **Netlify**
+(hosting), **Google Sheet** in Drive (VA updates). Domain: **siceats.com** (GoDaddy).
 
-## 1. Supabase (database + auth)
+---
 
-1. In your Supabase project, run the migrations in order via the SQL editor:
-   - `supabase/migrations/0001_init.sql`
-   - `supabase/migrations/0002_notes.sql`
-2. **Auth → URL Configuration:**
-   - **Site URL:** `https://siceats.com`
-   - **Redirect URLs:** add `https://siceats.com/auth/callback` and
-     `http://localhost:3000/auth/callback` (for local dev).
-3. (Optional, recommended) Restrict who can sign in. Today any authenticated
-   user is treated as admin. Until you add an allowlist, only send the magic
-   link to people you trust. Consider turning off public sign-ups in
-   **Auth → Providers → Email** once your admin account exists.
+## Part 1 — Put the code on GitHub
 
-## 2. Google Places API (New)
+Git is already initialized with a first commit. Create an empty repo at
+github.com (e.g. `sea-isle-eats`), then from the project folder:
 
-1. In Google Cloud, enable **Places API (New)**.
-2. Create an API key. Restrict it to **Places API (New)** (API restriction).
-   The key is used **server-side only**, so you don't need referrer
-   restrictions. (Vercel egress IPs aren't static, so prefer API restriction
-   over IP restriction.)
+```
+git remote add origin https://github.com/<you>/sea-isle-eats.git
+git branch -M main
+git push -u origin main
+```
 
-## 3. Vercel
+(Also update `GITHUB_REPO_URL` in `lib/config.ts` to this repo so the footer links right.)
 
-1. Import the repo into Vercel (Framework preset: **Next.js**).
-2. **Settings → Environment Variables** (Production + Preview):
+## Part 2 — Deploy on Netlify
+
+1. netlify.com → **Add new site → Import an existing project** → GitHub → pick the repo.
+2. Build settings auto-detect from `netlify.toml` (build command `next build`). Leave defaults.
+3. **Site configuration → Environment variables** — add all five:
    ```
-   NEXT_PUBLIC_SUPABASE_URL=…
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=…
-   SUPABASE_SERVICE_ROLE_KEY=…        # server-only, never exposed
-   GOOGLE_PLACES_API_KEY=…            # server-only
+   NEXT_PUBLIC_SUPABASE_URL
+   NEXT_PUBLIC_SUPABASE_ANON_KEY
+   SUPABASE_SERVICE_ROLE_KEY      # server-only
+   GOOGLE_PLACES_API_KEY          # server-only
+   IMPORT_SECRET                  # server-only (gates the sheet sync)
    ```
-3. Deploy. Without these set, the site still builds and runs in **demo mode**
-   (sample data, admin open, forms/sync disabled).
+   Use the same values as your local `.env.local`.
+4. **Deploy site.** You'll get a temporary `*.netlify.app` URL — confirm it loads.
 
-## 4. Domain — GoDaddy → Vercel
+## Part 3 — Domain (GoDaddy → Netlify)
 
-1. In Vercel: **Settings → Domains → Add** `siceats.com` (and `www.siceats.com`).
-2. Vercel shows the exact DNS records to create. Use **what Vercel displays** —
-   the values below are the current Vercel defaults and may change:
-   - Apex `siceats.com`: **A** record → `76.76.21.21`
-   - `www`: **CNAME** → `cname.vercel-dns.com`
-3. In GoDaddy → **DNS Management**, add those records (remove conflicting
-   parked-domain A/CNAME records GoDaddy created).
-4. Pick a canonical host. Recommended: redirect `www.siceats.com` → apex
-   `siceats.com` (set in Vercel's domain settings). `SITE_URL` in
-   `lib/config.ts` is already the apex.
-5. DNS can take up to a few hours to propagate; Vercel issues the SSL cert
-   automatically once records resolve.
+1. Netlify → **Domain management → Add a domain** → `siceats.com` (and `www`).
+2. Netlify shows the exact DNS records. Using GoDaddy's DNS (don't change nameservers):
+   - Apex `siceats.com`: **A** record → `75.2.60.5`
+   - `www`: **CNAME** → `<your-site>.netlify.app`
+   Use whatever Netlify displays. SSL issues automatically once DNS resolves.
+3. In GoDaddy → **DNS**, add those records (remove parked-domain records that conflict).
 
-## 5. Seed the data
+## Part 4 — Point Supabase auth at the live domain
 
-Once env vars are live, seed restaurants from Google:
+Supabase → **Authentication → URL Configuration**:
+- **Site URL:** `https://siceats.com`
+- **Redirect URLs:** add `https://siceats.com/auth/callback`
 
-- **Initial bulk seed (recommended):** locally with `.env.local` filled in,
-  run `npx tsx scripts/google-sync.ts`. No serverless time limit.
-- **Refreshes:** sign in at `/admin` and click **Run Google sync**.
+(Needed for admin magic-link sign-in to work in production.)
 
-New rows arrive `unverified` + unpublished. Work the queue in `/admin`: verify,
-fill `menu_url` / `order_url`, set status, then toggle **Published**.
+---
 
-## 6. Verify after deploy
+## Part 5 — Google Sheet for the VA
 
-- `https://siceats.com` — directory renders live published rows
-- `https://siceats.com/robots.txt` and `/sitemap.xml` resolve
-- `https://siceats.com/admin` → redirects to `/admin/login` when signed out
-- Magic-link sign-in works and lands back in the workspace
+The sync uses two secret-gated routes already deployed with the site
+(`/api/admin/export`, `/api/admin/import`). No service account, no public
+publishing — the sheet stays private in your Drive.
 
-## Scheduled refresh (optional, later)
+1. Create a new **Google Sheet** in your Drive (name it e.g. "Sea Isle Eats — Listings").
+2. **Extensions → Apps Script.** Delete the starter code, paste the contents of
+   `sheet/sea-isle-eats-sync.gs` from this repo, and Save.
+3. **Project Settings (gear) → Script properties → Add:**
+   - `SITE_URL` = `https://siceats.com`
+   - `SYNC_SECRET` = the same value as `IMPORT_SECRET` (copy it from your `.env.local` / Netlify)
+4. Reload the sheet tab. A **"Sea Isle Eats"** menu appears.
+5. **Sea Isle Eats → Pull latest from site** (authorize the script the first time).
+   The sheet fills with all 51 listings.
 
-To auto-refresh each season, either run `scripts/google-sync.ts` from a cron
-host, or add a `CRON_SECRET`-guarded branch to `app/api/admin/sync/route.ts`
-and trigger it with a Vercel Cron job.
+### How the VA works it
+- Edit cells: cuisine, price (1–4), phone, address, payment (TRUE/FALSE),
+  menu/order links, description, notes, **status** (`unverified` / `needs_call`
+  / `verified`), **published** (TRUE/FALSE).
+- **Hours:** per-day columns, 24h, e.g. `11:00-22:00`. Multiple ranges:
+  `11:00-14:00, 16:00-22:00`. Leave a day **blank for closed**.
+- **Don't edit** the `id` or `google_place_id` columns (they're the keys).
+- When done, **Sea Isle Eats → Push changes to site.** Edits save to Supabase,
+  and any Google-managed field the VA changed **auto-locks** so the Places sync
+  won't overwrite it.
+- The 11 flagged listings are marked `needs_call` with a reason in `notes`.
+
+Workflow tip: the VA clicks **Pull latest** at the start of a session and
+**Push changes** when done.
+
+---
+
+## Refreshing from Google (seasonal)
+
+- Re-run the Places sync anytime: sign into `/admin` → **Run Google sync**, or
+  run `npx tsx scripts/google-sync.ts` locally. It only adds/updates 08243
+  restaurants and never overwrites locked (human-edited) fields.
+
+## Security
+- Rotate the **service-role** and **Google Places** keys (and regenerate
+  `IMPORT_SECRET`) if they've been shared anywhere. Set the new values in
+  Netlify env vars (and `SYNC_SECRET` in Apps Script for IMPORT_SECRET).
