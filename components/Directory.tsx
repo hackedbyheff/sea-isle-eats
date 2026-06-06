@@ -53,7 +53,21 @@ export function Directory({
         if (lateNight && !(now && isLateNightOn(r.hours, now.day))) return false;
         return true;
       })
-      .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+      .sort((a, b) => {
+        // 1) Featured (sponsored) first
+        const feat = (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+        if (feat) return feat;
+        // 2) Open now before closed (only once we know the ET time)
+        if (now) {
+          const open = (isOpenNow(b.hours, now) ? 1 : 0) - (isOpenNow(a.hours, now) ? 1 : 0);
+          if (open) return open;
+        }
+        // 3) Higher rating first (unrated last)
+        const rating = (b.rating ?? -1) - (a.rating ?? -1);
+        if (rating) return rating;
+        // 4) Alphabetical tiebreaker
+        return a.name.localeCompare(b.name);
+      });
   }, [restaurants, query, cuisine, cardsOnly, onlineOnly, openNow, lateNight, now]);
 
   return (
