@@ -18,8 +18,8 @@ export function RestaurantCard({
 
   return (
     <article
-      className={`relative rounded-2xl bg-white p-5 border transition-shadow hover:shadow-lg ${
-        r.featured ? "border-coral ring-1 ring-coral/30" : "border-ink/10"
+      className={`group relative rounded-2xl bg-white p-5 border cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 ${
+        r.featured ? "border-coral ring-1 ring-coral/30" : "border-ink/10 hover:border-ink/25"
       }`}
     >
       {r.featured && (
@@ -31,7 +31,11 @@ export function RestaurantCard({
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="font-display text-2xl font-semibold leading-tight">
-            <Link href={`/r/${r.id}`} className="hover:text-coral focus:text-coral outline-none">
+            {/* Stretched link: makes the whole card navigate to the detail page */}
+            <Link
+              href={`/r/${r.id}`}
+              className="group-hover:text-coral after:absolute after:inset-0 after:content-['']"
+            >
               {r.name}
             </Link>
           </h3>
@@ -47,7 +51,7 @@ export function RestaurantCard({
       </div>
 
       {r.description && (
-        <p className="mt-2 text-ink/75 text-[15px] font-light">{r.description}</p>
+        <p className="mt-2 text-ink/75 text-[15px] font-light line-clamp-2">{r.description}</p>
       )}
 
       <div className="mt-3 flex flex-wrap gap-1.5 items-center text-sm">
@@ -79,26 +83,10 @@ export function RestaurantCard({
             <Banknote size={12} /> Cash only
           </Badge>
         )}
-        {r.online_ordering ? (
-          r.order_url ? (
-            <a
-              href={r.order_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-[filter] hover:brightness-110"
-              title="Order online"
-            >
-              <Badge tone="ink">
-                <ShoppingBag size={12} /> Order online →
-              </Badge>
-            </a>
-          ) : (
-            <Badge tone="ink">
-              <ShoppingBag size={12} /> Order online
-            </Badge>
-          )
-        ) : (
-          <Badge tone="muted">No online ordering</Badge>
+        {r.online_ordering && (
+          <Badge tone="ink">
+            <ShoppingBag size={12} /> Order online
+          </Badge>
         )}
       </div>
 
@@ -106,28 +94,14 @@ export function RestaurantCard({
         {r.phone && (
           <a
             href={`tel:${r.phone.replace(/[^\d+]/g, "")}`}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink hover:text-coral"
+            className="relative z-10 inline-flex items-center gap-1.5 text-sm font-medium text-ink hover:text-coral"
           >
             <Phone size={14} /> {r.phone}
           </a>
         )}
-        {r.menu_url ? (
-          <a
-            href={r.menu_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-auto text-sm font-semibold text-coral hover:underline"
-          >
-            View menu →
-          </a>
-        ) : (
-          <Link
-            href={`/r/${r.id}`}
-            className="ml-auto text-sm font-semibold text-coral hover:underline"
-          >
-            Details →
-          </Link>
-        )}
+        <span className="ml-auto text-sm font-semibold text-coral group-hover:underline">
+          View details →
+        </span>
       </div>
     </article>
   );
