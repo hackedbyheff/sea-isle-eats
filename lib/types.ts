@@ -32,6 +32,9 @@ export interface Restaurant {
   accepts_cash: boolean;
   accepts_cards: boolean | null;
   online_ordering: boolean;
+  dine_in: boolean | null;
+  takeout: boolean | null;
+  delivery: boolean | null;
   menu_url: string | null;
   order_url: string | null;
   website_url: string | null;

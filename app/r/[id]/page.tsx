@@ -14,6 +14,9 @@ import {
   Globe,
   Facebook,
   Instagram,
+  Utensils,
+  Package,
+  Bike,
 } from "lucide-react";
 import { getRestaurantById } from "@/lib/data";
 import { restaurantJsonLd } from "@/lib/jsonld";
@@ -198,6 +201,21 @@ export default async function RestaurantDetail({
             </Badge>
           ) : (
             <Badge tone="muted">No online ordering</Badge>
+          )}
+          {r.dine_in && (
+            <Badge tone="sand">
+              <Utensils size={12} /> Dine In
+            </Badge>
+          )}
+          {r.takeout && (
+            <Badge tone="sand">
+              <Package size={12} /> Take Out
+            </Badge>
+          )}
+          {r.delivery && (
+            <Badge tone="sand">
+              <Bike size={12} /> Delivery
+            </Badge>
           )}
         </div>
 

@@ -158,6 +158,21 @@ export function ListingEditor({
               label="Online ordering"
               onClick={() => set("online_ordering", !draft.online_ordering)}
             />
+            <Toggle
+              on={!!draft.dine_in}
+              label="Dine in"
+              onClick={() => set("dine_in", !draft.dine_in)}
+            />
+            <Toggle
+              on={!!draft.takeout}
+              label="Take out"
+              onClick={() => set("takeout", !draft.takeout)}
+            />
+            <Toggle
+              on={!!draft.delivery}
+              label="Delivery"
+              onClick={() => set("delivery", !draft.delivery)}
+            />
           </div>
 
           <Field label="Menu link (FB / Insta / website)">

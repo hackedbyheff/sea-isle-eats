@@ -15,6 +15,9 @@ export const SYNC_MANAGED_FIELDS = [
   "hours",
   "accepts_cards",
   "accepts_cash",
+  "dine_in",
+  "takeout",
+  "delivery",
   "description",
 ] as const;
 
@@ -34,6 +37,9 @@ export function coerceFieldValue(field: string, value: string): unknown {
     case "accepts_cards":
     case "accepts_cash":
     case "online_ordering":
+    case "dine_in":
+    case "takeout":
+    case "delivery":
     case "published":
     case "featured":
       return value === "true" || value === "1" || value.toLowerCase() === "yes";

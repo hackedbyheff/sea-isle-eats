@@ -18,6 +18,9 @@ const DETAILS_FIELD_MASK = [
   "rating",
   "priceLevel",
   "paymentOptions",
+  "dineIn",
+  "takeout",
+  "delivery",
   "editorialSummary",
   "types",
 ].join(",");
@@ -42,6 +45,9 @@ export interface PlaceDetails {
     acceptsCashOnly?: boolean;
     acceptsNfc?: boolean;
   };
+  dineIn?: boolean;
+  takeout?: boolean;
+  delivery?: boolean;
   editorialSummary?: { text?: string };
   types?: string[];
 }

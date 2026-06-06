@@ -113,6 +113,10 @@ export function mapPlaceToColumns(details: PlaceDetails): Record<string, unknown
     if (pay.acceptsCashOnly != null) out.accepts_cash = pay.acceptsCashOnly;
   }
 
+  if (details.dineIn != null) out.dine_in = details.dineIn;
+  if (details.takeout != null) out.takeout = details.takeout;
+  if (details.delivery != null) out.delivery = details.delivery;
+
   if (details.editorialSummary?.text) out.description = details.editorialSummary.text;
 
   const cuisine = deriveCuisine(details.types);
