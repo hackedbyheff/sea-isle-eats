@@ -14,14 +14,6 @@ export function Footer() {
             Local businesses
           </Link>
           <a
-            href={GITHUB_REPO_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-ink hover:text-coral"
-          >
-            Open source on GitHub
-          </a>
-          <a
             href={`${GITHUB_REPO_URL}/issues/new`}
             target="_blank"
             rel="noopener noreferrer"

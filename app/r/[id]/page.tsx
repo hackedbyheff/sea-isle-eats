@@ -16,7 +16,7 @@ import {
   Instagram,
   Utensils,
   Package,
-  Bike,
+  Car,
 } from "lucide-react";
 import { getRestaurantById } from "@/lib/data";
 import { restaurantJsonLd } from "@/lib/jsonld";
@@ -214,7 +214,7 @@ export default async function RestaurantDetail({
           )}
           {r.delivery && (
             <Badge tone="sand">
-              <Bike size={12} /> Delivery
+              <Car size={12} /> Delivery
             </Badge>
           )}
         </div>

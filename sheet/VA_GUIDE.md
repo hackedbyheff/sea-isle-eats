@@ -48,13 +48,24 @@ Edit cells directly. Key columns:
 | `address` | Street address |
 | `accepts_cards` | `TRUE` if they take cards, `FALSE` if cash-only |
 | `online_ordering` | `TRUE` / `FALSE` |
+| `dine_in` | `TRUE` / `FALSE` (sit-down available) |
+| `takeout` | `TRUE` / `FALSE` |
+| `delivery` | `TRUE` / `FALSE` |
 | `menu_url` | Link to their menu (Facebook / Instagram / website) |
 | `order_url` | Link to their online ordering, if any |
+| `website_url` | Their website |
+| `facebook_url` | Their Facebook page |
+| `instagram_url` | Their Instagram page |
 | `description` | Short blurb |
 | `notes` | Internal call log — not shown on the site |
 | `status` | `unverified`, `needs_call`, or `verified` |
 | `published` | `TRUE` to show on the site, `FALSE` to hide |
+| `owner_verified` | `TRUE` once the owner has claimed & confirmed the listing |
 | `hours_sun` … `hours_sat` | See below |
+
+Most fields (cuisine, hours, payment, dine-in/takeout/delivery) are pre-filled
+from Google — your job is to verify and correct them, and add the things Google
+doesn't give us (menu/order links, website & social links, owner-verified).
 
 **Hours:** each day is its own column, 24-hour time.
 - Open 11am–10pm → `11:00-22:00`
