@@ -17,6 +17,7 @@ import { priceLabel, parseCuisines } from "@/lib/format";
 import { SITE_LOCATION, SITE_NAME } from "@/lib/config";
 import { RestaurantHours } from "@/components/RestaurantHours";
 import { AdBanner } from "@/components/AdBanner";
+import { OrderDirectNote } from "@/components/OrderDirectNote";
 import { Badge } from "@/components/Badge";
 import { SuggestChangeForm } from "@/components/SuggestChangeForm";
 import { ClaimListingForm } from "@/components/ClaimListingForm";
@@ -129,6 +130,8 @@ export default async function RestaurantDetail({
             </a>
           )}
         </div>
+
+        <OrderDirectNote />
 
         {/* Payment badges */}
         <div className="mt-4 flex flex-wrap gap-1.5">
