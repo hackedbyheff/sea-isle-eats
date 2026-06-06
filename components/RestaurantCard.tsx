@@ -76,9 +76,23 @@ export function RestaurantCard({
         )}
         {r.accepts_cards === false && <Badge tone="muted">Cash only</Badge>}
         {r.online_ordering ? (
-          <Badge tone="ink">
-            <ShoppingBag size={12} /> Order online
-          </Badge>
+          r.order_url ? (
+            <a
+              href={r.order_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-[filter] hover:brightness-110"
+              title="Order online"
+            >
+              <Badge tone="ink">
+                <ShoppingBag size={12} /> Order online →
+              </Badge>
+            </a>
+          ) : (
+            <Badge tone="ink">
+              <ShoppingBag size={12} /> Order online
+            </Badge>
+          )
         ) : (
           <Badge tone="muted">No online ordering</Badge>
         )}

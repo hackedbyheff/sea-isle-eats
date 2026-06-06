@@ -16,6 +16,7 @@ import { restaurantJsonLd } from "@/lib/jsonld";
 import { priceLabel } from "@/lib/format";
 import { SITE_LOCATION, SITE_NAME } from "@/lib/config";
 import { RestaurantHours } from "@/components/RestaurantHours";
+import { AdBanner } from "@/components/AdBanner";
 import { Badge } from "@/components/Badge";
 import { SuggestChangeForm } from "@/components/SuggestChangeForm";
 import { ClaimListingForm } from "@/components/ClaimListingForm";
@@ -178,6 +179,11 @@ export default async function RestaurantDetail({
               </a>
             )}
           </section>
+        </div>
+
+        {/* Sponsor slot */}
+        <div className="mt-8">
+          <AdBanner />
         </div>
 
         {/* Public forms */}
