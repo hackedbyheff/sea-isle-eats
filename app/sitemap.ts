@@ -13,6 +13,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily",
       priority: 1,
     },
+    {
+      url: `${SITE_URL}/local`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
     ...restaurants.map((r) => ({
       url: `${SITE_URL}/r/${r.id}`,
       lastModified: r.updated_at ? new Date(r.updated_at) : now,

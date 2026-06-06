@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { getPublishedRestaurants } from "@/lib/data";
 import { SITE_LOCATION } from "@/lib/config";
@@ -12,8 +13,16 @@ export default async function Home() {
       {/* Header */}
       <header className="grain border-b-2 border-ink">
         <div className="mx-auto max-w-5xl px-5 pt-10 pb-7">
-          <div className="flex items-center gap-2 text-coral font-semibold tracking-[0.2em] uppercase text-xs mb-2">
-            <MapPin size={14} /> {SITE_LOCATION}
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-2 text-coral font-semibold tracking-[0.2em] uppercase text-xs">
+              <MapPin size={14} /> {SITE_LOCATION}
+            </div>
+            <Link
+              href="/local"
+              className="text-xs font-semibold uppercase tracking-wide text-ink/50 hover:text-coral"
+            >
+              Local businesses →
+            </Link>
           </div>
           <h1 className="font-display text-5xl sm:text-6xl leading-[0.95] font-semibold">
             Sea Isle <span className="italic text-coral">Eats</span>

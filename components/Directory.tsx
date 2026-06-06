@@ -4,8 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import type { Restaurant } from "@/lib/types";
 import { getEasternNow, isLateNightOn, isOpenNow, type NowInET } from "@/lib/hours";
+import { GRID_AD_INTERVAL, GRID_AD_MAX, GRID_SPONSORS } from "@/lib/ads";
 import { FilterChip } from "./FilterChip";
 import { RestaurantCard } from "./RestaurantCard";
+import { SponsorCard } from "./SponsorCard";
 import { AdBanner } from "./AdBanner";
 
 export function Directory({ restaurants }: { restaurants: Restaurant[] }) {
@@ -98,9 +100,25 @@ export function Directory({ restaurants }: { restaurants: Restaurant[] }) {
         {filtered.length} place{filtered.length !== 1 ? "s" : ""}
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        {filtered.map((r) => (
-          <RestaurantCard key={r.id} restaurant={r} now={now} />
-        ))}
+        {(() => {
+          const out: React.ReactNode[] = [];
+          let adIdx = 0;
+          filtered.forEach((r, i) => {
+            out.push(<RestaurantCard key={r.id} restaurant={r} now={now} />);
+            const atInterval = (i + 1) % GRID_AD_INTERVAL === 0;
+            if (
+              GRID_SPONSORS.length &&
+              atInterval &&
+              adIdx < GRID_AD_MAX &&
+              i + 1 < filtered.length
+            ) {
+              const biz = GRID_SPONSORS[adIdx % GRID_SPONSORS.length];
+              adIdx++;
+              out.push(<SponsorCard key={`ad-${i}`} business={biz} />);
+            }
+          });
+          return out;
+        })()}
       </div>
 
       {filtered.length === 0 && (
