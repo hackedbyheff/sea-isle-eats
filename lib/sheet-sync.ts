@@ -140,32 +140,38 @@ export function buildUpdateFromSheetRow(
   if (!row.id) return null;
 
   const update: Record<string, unknown> = {};
-  // Only set name if non-blank (never wipe a name to empty).
-  if (row.name?.trim()) update.name = row.name.trim();
-  update.cuisine = emptyToNull(row.cuisine);
-  update.price_level = row.price_level?.trim() ? parseInt(row.price_level, 10) : null;
-  update.rating = row.rating?.trim() ? parseFloat(row.rating) : null;
-  update.phone = emptyToNull(row.phone);
-  update.address = emptyToNull(row.address);
-  update.accepts_cash = parseBool(row.accepts_cash);
-  update.accepts_cards = parseBool(row.accepts_cards);
-  update.online_ordering = parseBool(row.online_ordering) ?? false;
-  update.dine_in = parseBool(row.dine_in);
-  update.takeout = parseBool(row.takeout);
-  update.delivery = parseBool(row.delivery);
-  update.menu_url = emptyToNull(row.menu_url);
-  update.order_url = emptyToNull(row.order_url);
-  update.website_url = emptyToNull(row.website_url);
-  update.facebook_url = emptyToNull(row.facebook_url);
-  update.instagram_url = emptyToNull(row.instagram_url);
-  update.description = emptyToNull(row.description);
-  update.notes = emptyToNull(row.notes);
-  if (["unverified", "needs_call", "verified"].includes(row.status?.trim())) {
+  // Only touch a column if the pushed sheet actually contains it. This prevents
+  // a stale sheet (missing newer columns) from wiping those fields to null.
+  const has = (k: string) => k in row;
+
+  // name: only if present AND non-blank (never wipe a name to empty).
+  if (has("name") && row.name.trim()) update.name = row.name.trim();
+  if (has("cuisine")) update.cuisine = emptyToNull(row.cuisine);
+  if (has("price_level"))
+    update.price_level = row.price_level?.trim() ? parseInt(row.price_level, 10) : null;
+  if (has("rating")) update.rating = row.rating?.trim() ? parseFloat(row.rating) : null;
+  if (has("phone")) update.phone = emptyToNull(row.phone);
+  if (has("address")) update.address = emptyToNull(row.address);
+  if (has("accepts_cash")) update.accepts_cash = parseBool(row.accepts_cash);
+  if (has("accepts_cards")) update.accepts_cards = parseBool(row.accepts_cards);
+  if (has("online_ordering")) update.online_ordering = parseBool(row.online_ordering) ?? false;
+  if (has("dine_in")) update.dine_in = parseBool(row.dine_in);
+  if (has("takeout")) update.takeout = parseBool(row.takeout);
+  if (has("delivery")) update.delivery = parseBool(row.delivery);
+  if (has("menu_url")) update.menu_url = emptyToNull(row.menu_url);
+  if (has("order_url")) update.order_url = emptyToNull(row.order_url);
+  if (has("website_url")) update.website_url = emptyToNull(row.website_url);
+  if (has("facebook_url")) update.facebook_url = emptyToNull(row.facebook_url);
+  if (has("instagram_url")) update.instagram_url = emptyToNull(row.instagram_url);
+  if (has("description")) update.description = emptyToNull(row.description);
+  if (has("notes")) update.notes = emptyToNull(row.notes);
+  if (has("status") && ["unverified", "needs_call", "verified"].includes(row.status?.trim())) {
     update.status = row.status.trim();
   }
-  update.published = parseBool(row.published) ?? false;
-  update.owner_verified = parseBool(row.owner_verified) ?? false;
-  update.hours = sheetRowToHours(row);
+  if (has("published")) update.published = parseBool(row.published) ?? false;
+  if (has("owner_verified")) update.owner_verified = parseBool(row.owner_verified) ?? false;
+  // hours: only if the sheet includes the day columns.
+  if (DAY_COLS.some((c) => c in row)) update.hours = sheetRowToHours(row);
 
   // Lock any Google-managed field whose value changed vs the DB.
   const locked = new Set(current.locked_fields ?? []);

@@ -24,6 +24,7 @@ export function Directory({
   const [cardsOnly, setCardsOnly] = useState(false);
   const [onlineOnly, setOnlineOnly] = useState(false);
   const [lateNight, setLateNight] = useState(false);
+  const [deliveryOnly, setDeliveryOnly] = useState(false);
 
   // "now" is anchored to America/New_York. Computed after mount to avoid a
   // server/client hydration mismatch on the open/closed state.
@@ -49,6 +50,7 @@ export function Directory({
         if (cuisine !== "All" && !parseCuisines(r.cuisine).includes(cuisine)) return false;
         if (cardsOnly && r.accepts_cards !== true) return false;
         if (onlineOnly && !r.online_ordering) return false;
+        if (deliveryOnly && r.delivery !== true) return false;
         if (openNow && !(now && isOpenNow(r.hours, now))) return false;
         if (lateNight && !(now && isLateNightOn(r.hours, now.day))) return false;
         return true;
@@ -68,7 +70,7 @@ export function Directory({
         // 4) Alphabetical tiebreaker
         return a.name.localeCompare(b.name);
       });
-  }, [restaurants, query, cuisine, cardsOnly, onlineOnly, openNow, lateNight, now]);
+  }, [restaurants, query, cuisine, cardsOnly, onlineOnly, deliveryOnly, openNow, lateNight, now]);
 
   return (
     <>
@@ -110,6 +112,9 @@ export function Directory({
         </FilterChip>
         <FilterChip active={lateNight} onClick={() => setLateNight(!lateNight)}>
           Late Night
+        </FilterChip>
+        <FilterChip active={deliveryOnly} onClick={() => setDeliveryOnly(!deliveryOnly)}>
+          Delivery
         </FilterChip>
       </div>
 
