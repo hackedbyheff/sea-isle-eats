@@ -1,12 +1,13 @@
-import { BANNER_SPONSOR } from "@/lib/ads";
+import { pickBannerSponsor } from "@/lib/ads";
 import { Badge } from "./Badge";
 
 /**
- * Banner ad slot on the directory. Renders the active sponsor from lib/ads.ts,
- * or a placeholder when none is set. Placement is real either way.
+ * Banner ad slot. Renders a rotating sponsor from lib/ads.ts. Pass a `seed`
+ * (e.g. a restaurant id) for a stable, evenly-distributed choice per page;
+ * omit it for a random pick.
  */
-export function AdBanner() {
-  const sponsor = BANNER_SPONSOR;
+export function AdBanner({ seed }: { seed?: string | number }) {
+  const sponsor = pickBannerSponsor(seed);
 
   if (!sponsor) {
     return (
@@ -42,7 +43,7 @@ export function AdBanner() {
           <div className="text-sm text-ink/70">{sponsor.tagline}</div>
         </div>
         <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-coral text-white px-4 py-2 text-sm font-semibold">
-          {sponsor.cta} →
+          {sponsor.cta ?? `Visit ${sponsor.name}`} →
         </span>
       </div>
     </a>

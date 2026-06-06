@@ -11,7 +11,13 @@ import { RestaurantCard } from "./RestaurantCard";
 import { SponsorCard } from "./SponsorCard";
 import { AdBanner } from "./AdBanner";
 
-export function Directory({ restaurants }: { restaurants: Restaurant[] }) {
+export function Directory({
+  restaurants,
+  bannerSeed,
+}: {
+  restaurants: Restaurant[];
+  bannerSeed?: string | number;
+}) {
   const [query, setQuery] = useState("");
   const [cuisine, setCuisine] = useState("All");
   const [openNow, setOpenNow] = useState(false);
@@ -94,7 +100,7 @@ export function Directory({ restaurants }: { restaurants: Restaurant[] }) {
       </div>
 
       {/* Banner ad slot */}
-      <AdBanner />
+      <AdBanner seed={bannerSeed} />
 
       {/* Listings */}
       <div className="text-sm text-ink/50 mt-6 mb-3">

@@ -1,10 +1,10 @@
-import type { LocalBusiness } from "@/lib/ads";
+import type { Sponsor } from "@/lib/ads";
 
 /**
  * Native sponsored card slotted into the directory grid. Visually a sibling of
  * RestaurantCard but tinted teal and clearly labeled "Sponsored".
  */
-export function SponsorCard({ business }: { business: LocalBusiness }) {
+export function SponsorCard({ business }: { business: Sponsor }) {
   return (
     <a
       href={business.url}

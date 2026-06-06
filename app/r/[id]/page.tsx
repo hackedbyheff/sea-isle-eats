@@ -186,9 +186,9 @@ export default async function RestaurantDetail({
           </section>
         </div>
 
-        {/* Sponsor slot */}
+        {/* Sponsor slot — rotates by restaurant id (stable per page) */}
         <div className="mt-8">
-          <AdBanner />
+          <AdBanner seed={r.id} />
         </div>
 
         {/* Public forms */}
