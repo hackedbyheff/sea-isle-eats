@@ -35,6 +35,9 @@ export const SHEET_COLUMNS = [
   "online_ordering",
   "menu_url",
   "order_url",
+  "website_url",
+  "facebook_url",
+  "instagram_url",
   "description",
   "notes",
   "status",
@@ -99,6 +102,9 @@ export function dbRowToSheetRow(r: Restaurant): SheetRow {
     online_ordering: String(!!r.online_ordering).toUpperCase(),
     menu_url: r.menu_url ?? "",
     order_url: r.order_url ?? "",
+    website_url: r.website_url ?? "",
+    facebook_url: r.facebook_url ?? "",
+    instagram_url: r.instagram_url ?? "",
     description: r.description ?? "",
     notes: r.notes ?? "",
     status: r.status,
@@ -140,6 +146,9 @@ export function buildUpdateFromSheetRow(
   update.online_ordering = parseBool(row.online_ordering) ?? false;
   update.menu_url = emptyToNull(row.menu_url);
   update.order_url = emptyToNull(row.order_url);
+  update.website_url = emptyToNull(row.website_url);
+  update.facebook_url = emptyToNull(row.facebook_url);
+  update.instagram_url = emptyToNull(row.instagram_url);
   update.description = emptyToNull(row.description);
   update.notes = emptyToNull(row.notes);
   if (["unverified", "needs_call", "verified"].includes(row.status?.trim())) {

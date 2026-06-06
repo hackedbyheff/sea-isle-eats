@@ -176,6 +176,32 @@ export function ListingEditor({
               className="inp"
             />
           </Field>
+          <Field label="Website">
+            <input
+              value={draft.website_url ?? ""}
+              onChange={(e) => set("website_url", e.target.value || null)}
+              placeholder="https://…"
+              className="inp"
+            />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Facebook">
+              <input
+                value={draft.facebook_url ?? ""}
+                onChange={(e) => set("facebook_url", e.target.value || null)}
+                placeholder="https://facebook.com/…"
+                className="inp"
+              />
+            </Field>
+            <Field label="Instagram">
+              <input
+                value={draft.instagram_url ?? ""}
+                onChange={(e) => set("instagram_url", e.target.value || null)}
+                placeholder="https://instagram.com/…"
+                className="inp"
+              />
+            </Field>
+          </div>
 
           <Field label="Description" field="description" locked={isLocked} onToggleLock={toggleLock}>
             <textarea

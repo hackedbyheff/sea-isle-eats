@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Phone, Clock, CreditCard, Banknote, ShoppingBag, Star, BadgeCheck } from "lucide-react";
+import { Phone, Clock, CreditCard, Banknote, ShoppingBag, Star, BadgeCheck, Facebook, Instagram } from "lucide-react";
 import type { Restaurant } from "@/lib/types";
 import { priceLabel, parseCuisines } from "@/lib/format";
 import { isOpenNow, todayHoursLabel, type NowInET } from "@/lib/hours";
@@ -99,9 +99,33 @@ export function RestaurantCard({
             <Phone size={14} /> {r.phone}
           </a>
         )}
-        <span className="ml-auto text-sm font-semibold text-coral group-hover:underline">
-          View details →
-        </span>
+        <div className="ml-auto flex items-center gap-3">
+          {r.facebook_url && (
+            <a
+              href={r.facebook_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="relative z-10 text-ink/40 hover:text-coral"
+            >
+              <Facebook size={16} />
+            </a>
+          )}
+          {r.instagram_url && (
+            <a
+              href={r.instagram_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="relative z-10 text-ink/40 hover:text-coral"
+            >
+              <Instagram size={16} />
+            </a>
+          )}
+          <span className="text-sm font-semibold text-coral group-hover:underline">
+            View details →
+          </span>
+        </div>
       </div>
     </article>
   );

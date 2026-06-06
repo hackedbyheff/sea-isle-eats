@@ -11,6 +11,9 @@ import {
   CreditCard,
   Banknote,
   BadgeCheck,
+  Globe,
+  Facebook,
+  Instagram,
 } from "lucide-react";
 import { getRestaurantById } from "@/lib/data";
 import { restaurantJsonLd } from "@/lib/jsonld";
@@ -139,6 +142,42 @@ export default async function RestaurantDetail({
           )}
         </div>
 
+        {/* Find them online */}
+        {(r.website_url || r.facebook_url || r.instagram_url) && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {r.website_url && (
+              <a
+                href={r.website_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-ink/20 px-4 py-2 text-sm font-medium text-ink hover:border-ink/50 hover:text-coral"
+              >
+                <Globe size={15} /> Website
+              </a>
+            )}
+            {r.facebook_url && (
+              <a
+                href={r.facebook_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-ink/20 px-4 py-2 text-sm font-medium text-ink hover:border-ink/50 hover:text-coral"
+              >
+                <Facebook size={15} /> Facebook
+              </a>
+            )}
+            {r.instagram_url && (
+              <a
+                href={r.instagram_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-ink/20 px-4 py-2 text-sm font-medium text-ink hover:border-ink/50 hover:text-coral"
+              >
+                <Instagram size={15} /> Instagram
+              </a>
+            )}
+          </div>
+        )}
+
         <OrderDirectNote />
 
         {/* Payment badges */}
@@ -189,6 +228,14 @@ export default async function RestaurantDetail({
               >
                 <Phone size={16} /> {r.phone}
               </a>
+            )}
+            {r.lat != null && r.lng != null && (
+              <iframe
+                title={`Map showing ${r.name}`}
+                loading="lazy"
+                className="mt-1 w-full h-44 rounded-xl border border-ink/10"
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${r.lng - 0.008}%2C${r.lat - 0.004}%2C${r.lng + 0.008}%2C${r.lat + 0.004}&layer=mapnik&marker=${r.lat}%2C${r.lng}`}
+              />
             )}
           </section>
         </div>

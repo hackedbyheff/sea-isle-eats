@@ -34,6 +34,9 @@ export interface Restaurant {
   online_ordering: boolean;
   menu_url: string | null;
   order_url: string | null;
+  website_url: string | null;
+  facebook_url: string | null;
+  instagram_url: string | null;
   description: string | null;
   notes: string | null; // internal call-log / admin notes (not public)
   status: ListingStatus;
