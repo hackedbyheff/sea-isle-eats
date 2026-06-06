@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import type { Restaurant } from "@/lib/types";
 import { getEasternNow, isLateNightOn, isOpenNow, type NowInET } from "@/lib/hours";
+import { parseCuisines } from "@/lib/format";
 import { GRID_AD_INTERVAL, GRID_AD_MAX, GRID_SPONSORS } from "@/lib/ads";
 import { FilterChip } from "./FilterChip";
 import { RestaurantCard } from "./RestaurantCard";
@@ -29,7 +30,7 @@ export function Directory({ restaurants }: { restaurants: Restaurant[] }) {
 
   const cuisines = useMemo(() => {
     const set = new Set<string>();
-    restaurants.forEach((r) => r.cuisine && set.add(r.cuisine));
+    restaurants.forEach((r) => parseCuisines(r.cuisine).forEach((c) => set.add(c)));
     return ["All", ...Array.from(set).sort()];
   }, [restaurants]);
 
@@ -39,7 +40,7 @@ export function Directory({ restaurants }: { restaurants: Restaurant[] }) {
       .filter((r) => {
         if (q && !r.name.toLowerCase().includes(q) && !(r.cuisine ?? "").toLowerCase().includes(q))
           return false;
-        if (cuisine !== "All" && r.cuisine !== cuisine) return false;
+        if (cuisine !== "All" && !parseCuisines(r.cuisine).includes(cuisine)) return false;
         if (cardsOnly && r.accepts_cards !== true) return false;
         if (onlineOnly && !r.online_ordering) return false;
         if (openNow && !(now && isOpenNow(r.hours, now))) return false;

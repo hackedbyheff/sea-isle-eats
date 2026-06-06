@@ -1,6 +1,6 @@
 import type { Restaurant } from "./types";
 import { SITE_URL } from "./config";
-import { priceLabel } from "./format";
+import { priceLabel, parseCuisines } from "./format";
 
 const DAY_NAMES = [
   "Sunday",
@@ -34,7 +34,8 @@ export function restaurantJsonLd(r: Restaurant): Record<string, unknown> {
     url: `${SITE_URL}/r/${r.id}`,
   };
 
-  if (r.cuisine) jsonLd.servesCuisine = r.cuisine;
+  const cuisines = parseCuisines(r.cuisine);
+  if (cuisines.length) jsonLd.servesCuisine = cuisines;
   if (r.phone) jsonLd.telephone = r.phone;
   if (r.price_level) jsonLd.priceRange = priceLabel(r.price_level);
   if (r.menu_url) jsonLd.hasMenu = r.menu_url;

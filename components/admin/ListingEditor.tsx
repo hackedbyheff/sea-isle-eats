@@ -80,6 +80,7 @@ export function ListingEditor({
               <input
                 value={draft.cuisine ?? ""}
                 onChange={(e) => set("cuisine", e.target.value || null)}
+                placeholder="e.g. Hot Dog, Pizza"
                 className="inp"
               />
             </Field>

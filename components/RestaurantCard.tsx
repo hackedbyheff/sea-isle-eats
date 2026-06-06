@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Phone, Clock, CreditCard, Banknote, ShoppingBag, Star } from "lucide-react";
 import type { Restaurant } from "@/lib/types";
-import { priceLabel } from "@/lib/format";
+import { priceLabel, parseCuisines } from "@/lib/format";
 import { isOpenNow, todayHoursLabel, type NowInET } from "@/lib/hours";
 import { Badge } from "./Badge";
 
@@ -36,7 +36,7 @@ export function RestaurantCard({
             </Link>
           </h3>
           <div className="mt-1 text-sm text-ink/55">
-            {[r.cuisine, price].filter(Boolean).join(" · ")}
+            {[...parseCuisines(r.cuisine), price].filter(Boolean).join(" · ")}
           </div>
         </div>
         {r.rating != null && (

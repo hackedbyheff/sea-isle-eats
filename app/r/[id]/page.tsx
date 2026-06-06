@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { getRestaurantById } from "@/lib/data";
 import { restaurantJsonLd } from "@/lib/jsonld";
-import { priceLabel } from "@/lib/format";
+import { priceLabel, parseCuisines } from "@/lib/format";
 import { SITE_LOCATION, SITE_NAME } from "@/lib/config";
 import { RestaurantHours } from "@/components/RestaurantHours";
 import { AdBanner } from "@/components/AdBanner";
@@ -30,7 +30,9 @@ export async function generateMetadata({
   const { id } = await params;
   const r = await getRestaurantById(id);
   if (!r) return { title: "Not found" };
-  const bits = [r.cuisine, priceLabel(r.price_level)].filter(Boolean).join(" · ");
+  const bits = [...parseCuisines(r.cuisine), priceLabel(r.price_level)]
+    .filter(Boolean)
+    .join(" · ");
   const description =
     r.description ??
     `${r.name}${bits ? ` (${bits})` : ""} in ${SITE_LOCATION}. Hours, payment, and where to see the menu.`;
@@ -59,7 +61,7 @@ export default async function RestaurantDetail({
   if (!r) notFound();
 
   const price = priceLabel(r.price_level);
-  const meta = [r.cuisine, price].filter(Boolean).join(" · ");
+  const meta = [...parseCuisines(r.cuisine), price].filter(Boolean).join(" · ");
   const mapsQuery = encodeURIComponent(
     r.address ? r.address : `${r.name}, ${SITE_LOCATION}`,
   );
