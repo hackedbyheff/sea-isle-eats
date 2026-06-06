@@ -19,6 +19,8 @@ function onOpen() {
     .createMenu('Sea Isle Eats')
     .addItem('Pull latest from site', 'pullFromSite')
     .addItem('Push changes to site', 'pushToSite')
+    .addSeparator()
+    .addItem('Pull submissions (suggestions & claims)', 'pullSubmissions')
     .addToUi();
 }
 
@@ -83,4 +85,28 @@ function pushToSite() {
   var out = JSON.parse(res.getContentText());
   var msg = 'Saved ' + out.updated + ' listings.' + (out.errors && out.errors.length ? ' ' + out.errors.length + ' errors.' : '');
   SpreadsheetApp.getActiveSpreadsheet().toast(msg, 'Sea Isle Eats');
+}
+
+// Pull pending "suggest a change" + "claim listing" submissions into a
+// "Submissions" tab (created if it doesn't exist). Read-only inbox.
+function pullSubmissions() {
+  var cfg = _config();
+  var res = UrlFetchApp.fetch(cfg.url + '/api/admin/submissions', {
+    headers: { 'x-sync-secret': cfg.secret }, muteHttpExceptions: true,
+  });
+  if (res.getResponseCode() !== 200) {
+    SpreadsheetApp.getUi().alert('Pull failed: ' + res.getContentText()); return;
+  }
+  var data = JSON.parse(res.getContentText());
+  var cols = data.columns;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Submissions') || ss.insertSheet('Submissions');
+  sheet.clearContents();
+  var values = [cols];
+  data.rows.forEach(function (r) {
+    values.push(cols.map(function (c) { return r[c] != null ? r[c] : ''; }));
+  });
+  sheet.getRange(1, 1, values.length, cols.length).setValues(values);
+  sheet.setFrozenRows(1);
+  ss.toast('Pulled ' + data.rows.length + ' submission(s).', 'Sea Isle Eats');
 }
