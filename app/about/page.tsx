@@ -38,11 +38,10 @@ export default function AboutPage() {
             <Heart size={18} fill="currentColor" /> Ordering direct keeps more with the kitchen
           </div>
           <p className="mt-3 text-ink/80 leading-relaxed">
-            Third-party delivery apps like <strong>DoorDash</strong>,{" "}
-            <strong>Uber Eats</strong>, and <strong>Grubhub</strong> can charge a
-            restaurant <strong>as much as 30%</strong> of every order in commissions
-            and fees. On thin restaurant margins, that&apos;s often the difference
-            between a profitable order and a break-even one.
+            <strong>Third-party delivery apps</strong> can charge a restaurant{" "}
+            <strong>as much as 30%</strong> of every order in commissions and fees. On
+            thin restaurant margins, that&apos;s often the difference between a
+            profitable order and a break-even one.
           </p>
           <p className="mt-3 text-ink/80 leading-relaxed">
             When you <strong>call the restaurant</strong> or order from{" "}
