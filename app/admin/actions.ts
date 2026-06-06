@@ -38,6 +38,7 @@ const EDITABLE_COLUMNS = [
   "dine_in",
   "takeout",
   "delivery",
+  "byob",
   "menu_url",
   "order_url",
   "website_url",

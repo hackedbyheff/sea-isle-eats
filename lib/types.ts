@@ -35,6 +35,7 @@ export interface Restaurant {
   dine_in: boolean | null;
   takeout: boolean | null;
   delivery: boolean | null;
+  byob: boolean | null;
   menu_url: string | null;
   order_url: string | null;
   website_url: string | null;

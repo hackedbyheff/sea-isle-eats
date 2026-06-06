@@ -36,6 +36,7 @@ export const SHEET_COLUMNS = [
   "dine_in",
   "takeout",
   "delivery",
+  "byob",
   "menu_url",
   "order_url",
   "website_url",
@@ -106,6 +107,7 @@ export function dbRowToSheetRow(r: Restaurant): SheetRow {
     dine_in: r.dine_in == null ? "" : String(r.dine_in).toUpperCase(),
     takeout: r.takeout == null ? "" : String(r.takeout).toUpperCase(),
     delivery: r.delivery == null ? "" : String(r.delivery).toUpperCase(),
+    byob: r.byob == null ? "" : String(r.byob).toUpperCase(),
     menu_url: r.menu_url ?? "",
     order_url: r.order_url ?? "",
     website_url: r.website_url ?? "",
@@ -158,6 +160,7 @@ export function buildUpdateFromSheetRow(
   if (has("dine_in")) update.dine_in = parseBool(row.dine_in);
   if (has("takeout")) update.takeout = parseBool(row.takeout);
   if (has("delivery")) update.delivery = parseBool(row.delivery);
+  if (has("byob")) update.byob = parseBool(row.byob);
   if (has("menu_url")) update.menu_url = emptyToNull(row.menu_url);
   if (has("order_url")) update.order_url = emptyToNull(row.order_url);
   if (has("website_url")) update.website_url = emptyToNull(row.website_url);

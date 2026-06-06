@@ -17,6 +17,7 @@ import {
   Utensils,
   Package,
   Car,
+  Wine,
 } from "lucide-react";
 import { getRestaurantById } from "@/lib/data";
 import { restaurantJsonLd } from "@/lib/jsonld";
@@ -215,6 +216,11 @@ export default async function RestaurantDetail({
           {r.delivery && (
             <Badge tone="sand">
               <Car size={12} /> Delivery
+            </Badge>
+          )}
+          {r.byob && (
+            <Badge tone="teal">
+              <Wine size={12} /> BYOB
             </Badge>
           )}
         </div>

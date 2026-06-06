@@ -38,6 +38,7 @@ function make(partial: Partial<Restaurant> & Pick<Restaurant, "id" | "name">): R
     dine_in: null,
     takeout: null,
     delivery: null,
+    byob: null,
     menu_url: null,
     order_url: null,
     website_url: null,

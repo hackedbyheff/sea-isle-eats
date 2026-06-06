@@ -173,6 +173,11 @@ export function ListingEditor({
               label="Delivery"
               onClick={() => set("delivery", !draft.delivery)}
             />
+            <Toggle
+              on={!!draft.byob}
+              label="BYOB"
+              onClick={() => set("byob", !draft.byob)}
+            />
           </div>
 
           <Field label="Menu link (FB / Insta / website)">
