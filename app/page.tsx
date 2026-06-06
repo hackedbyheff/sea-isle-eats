@@ -7,8 +7,6 @@ import { Footer } from "@/components/Footer";
 
 export default async function Home() {
   const { restaurants, usingSample } = await getPublishedRestaurants();
-  // Rotate the home banner per request (page is dynamically rendered).
-  const bannerSeed = Math.floor(Math.random() * 100000);
 
   return (
     <div className="min-h-screen w-full bg-page text-ink">
@@ -44,7 +42,7 @@ export default async function Home() {
             listings to see live data here.
           </div>
         )}
-        <Directory restaurants={restaurants} bannerSeed={bannerSeed} />
+        <Directory restaurants={restaurants} bannerSponsorId="verde-colab" />
       </main>
 
       <Footer />

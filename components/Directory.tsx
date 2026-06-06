@@ -13,10 +13,10 @@ import { AdBanner } from "./AdBanner";
 
 export function Directory({
   restaurants,
-  bannerSeed,
+  bannerSponsorId,
 }: {
   restaurants: Restaurant[];
-  bannerSeed?: string | number;
+  bannerSponsorId?: string;
 }) {
   const [query, setQuery] = useState("");
   const [cuisine, setCuisine] = useState("All");
@@ -99,8 +99,8 @@ export function Directory({
         </FilterChip>
       </div>
 
-      {/* Banner ad slot */}
-      <AdBanner seed={bannerSeed} />
+      {/* Banner ad slot (home pins one sponsor) */}
+      <AdBanner sponsorId={bannerSponsorId} />
 
       {/* Listings */}
       <div className="text-sm text-ink/50 mt-6 mb-3">

@@ -140,12 +140,11 @@ export default async function RestaurantDetail({
               <CreditCard size={12} /> Cards
             </Badge>
           )}
-          {r.accepts_cash && (
-            <Badge tone="sand">
-              <Banknote size={12} /> Cash
+          {r.accepts_cards === false && (
+            <Badge tone="muted">
+              <Banknote size={12} /> Cash only
             </Badge>
           )}
-          {r.accepts_cards === false && <Badge tone="muted">Cash only</Badge>}
           {r.online_ordering ? (
             <Badge tone="ink">
               <ShoppingBag size={12} /> Order online

@@ -1,13 +1,19 @@
-import { pickBannerSponsor } from "@/lib/ads";
+import { getSponsor, pickBannerSponsor } from "@/lib/ads";
 import { Badge } from "./Badge";
 
 /**
- * Banner ad slot. Renders a rotating sponsor from lib/ads.ts. Pass a `seed`
- * (e.g. a restaurant id) for a stable, evenly-distributed choice per page;
- * omit it for a random pick.
+ * Banner ad slot. Pass `sponsorId` to pin a specific sponsor (e.g. the home
+ * page → Verde Colab). Otherwise pass a `seed` (e.g. a restaurant id) for a
+ * stable, evenly-distributed rotating choice; omit both for random.
  */
-export function AdBanner({ seed }: { seed?: string | number }) {
-  const sponsor = pickBannerSponsor(seed);
+export function AdBanner({
+  seed,
+  sponsorId,
+}: {
+  seed?: string | number;
+  sponsorId?: string;
+}) {
+  const sponsor = (sponsorId && getSponsor(sponsorId)) || pickBannerSponsor(seed);
 
   if (!sponsor) {
     return (

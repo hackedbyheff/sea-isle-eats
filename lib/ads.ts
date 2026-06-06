@@ -79,6 +79,11 @@ export const GRID_AD_MAX = 2;
  * shows one sponsor, and the three split the pages ~evenly. Without a seed it's
  * random.
  */
+/** Look up a specific sponsor by id (e.g. to pin the home banner). */
+export function getSponsor(id: string): Sponsor | null {
+  return SPONSORS.find((s) => s.id === id) ?? null;
+}
+
 export function pickBannerSponsor(seed?: string | number): Sponsor | null {
   const list = BANNER_SPONSORS;
   if (!list.length) return null;
