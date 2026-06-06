@@ -137,7 +137,7 @@ export default async function RestaurantDetail({
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-coral text-white px-5 py-2.5 text-sm font-semibold hover:brightness-110"
             >
-              <ShoppingBag size={15} /> Order online
+              <ShoppingBag size={15} /> Order Online
             </a>
           )}
         </div>
@@ -194,7 +194,7 @@ export default async function RestaurantDetail({
           )}
           {r.online_ordering ? (
             <Badge tone="ink">
-              <ShoppingBag size={12} /> Order online
+              <ShoppingBag size={12} /> Order Online
             </Badge>
           ) : (
             <Badge tone="muted">No online ordering</Badge>

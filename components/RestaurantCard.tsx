@@ -85,7 +85,7 @@ export function RestaurantCard({
         )}
         {r.online_ordering && (
           <Badge tone="ink">
-            <ShoppingBag size={12} /> Order online
+            <ShoppingBag size={12} /> Order Online
           </Badge>
         )}
       </div>
