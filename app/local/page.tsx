@@ -6,9 +6,9 @@ import { ADS_CONTACT_EMAIL, SITE_LOCATION } from "@/lib/config";
 import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Local Businesses",
+  title: "Sponsors",
   description:
-    "Sea Isle City coworking, rentals, realtors, shops & services — local businesses we recommend.",
+    "The local businesses that support Sea Isle Eats — coworking, rentals, realtors, shops & services worth knowing in Sea Isle City.",
   alternates: { canonical: "/local" },
 };
 
@@ -24,11 +24,11 @@ export default function LocalPage() {
             <ArrowLeft size={16} /> Sea Isle Eats
           </Link>
           <h1 className="mt-4 font-display text-5xl sm:text-6xl leading-[0.95] font-semibold">
-            Local <span className="italic text-coral">Businesses</span>
+            Our <span className="italic text-coral">Sponsors</span>
           </h1>
           <p className="mt-3 max-w-xl text-ink/70 text-lg font-light">
-            Beyond the kitchens — the coworking, rentals, shops, and services that
-            make {SITE_LOCATION} run.
+            The local businesses that support Sea Isle Eats — the coworking, rentals,
+            shops, and services that help keep this guide free for {SITE_LOCATION}.
           </p>
         </div>
       </header>

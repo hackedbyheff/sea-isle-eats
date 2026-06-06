@@ -11,7 +11,7 @@ export function Footer() {
             Why order direct
           </Link>
           <Link href="/local" className="text-ink hover:text-coral">
-            Local businesses
+            Sponsors
           </Link>
           <a
             href={`${GITHUB_REPO_URL}/issues/new`}

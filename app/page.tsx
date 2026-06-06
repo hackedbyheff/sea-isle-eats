@@ -21,7 +21,7 @@ export default async function Home() {
               href="/local"
               className="text-xs font-semibold uppercase tracking-wide text-ink/50 hover:text-coral"
             >
-              Local businesses →
+              Sponsors →
             </Link>
           </div>
           <h1 className="font-display text-5xl sm:text-6xl leading-[0.95] font-semibold">

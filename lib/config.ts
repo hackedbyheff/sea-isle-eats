@@ -10,7 +10,7 @@ export const SITE_URL = "https://siceats.com";
 export const GITHUB_REPO_URL = "https://github.com/hackedbyheff/sea-isle-eats";
 
 /** Where advertising inquiries go (used on the /local "list your business" CTA). */
-export const ADS_CONTACT_EMAIL = "ads@siceats.com";
+export const ADS_CONTACT_EMAIL = "chris@dlivrd.io";
 
 /** The community guide disclaimer shown in the footer on every page. */
 export const DISCLAIMER =
