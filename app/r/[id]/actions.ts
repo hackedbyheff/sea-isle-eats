@@ -1,6 +1,8 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { sendNotification } from "@/lib/email";
+import { SITE_URL } from "@/lib/config";
 
 export interface FormState {
   ok: boolean;
@@ -58,6 +60,20 @@ export async function submitSuggestion(
       submitter_email,
     });
     if (error) throw error;
+
+    await sendNotification(
+      "Sea Isle Eats — new suggestion",
+      [
+        `Field: ${field ?? "(general note)"}`,
+        suggested_value ? `Suggested: ${suggested_value}` : null,
+        note ? `Note: ${note}` : null,
+        submitter_email ? `From: ${submitter_email}` : null,
+        `Listing: ${SITE_URL}/r/${restaurant_id}`,
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    );
+
     return { ok: true };
   } catch {
     return { ok: false, error: "Something went wrong. Please try again." };
@@ -91,6 +107,19 @@ export async function submitClaim(
       message,
     });
     if (error) throw error;
+
+    await sendNotification(
+      "Sea Isle Eats — new listing claim",
+      [
+        claimant_name ? `Name: ${claimant_name}` : null,
+        `Email: ${claimant_email}`,
+        message ? `Message: ${message}` : null,
+        `Listing: ${SITE_URL}/r/${restaurant_id}`,
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    );
+
     return { ok: true };
   } catch {
     return { ok: false, error: "Something went wrong. Please try again." };
