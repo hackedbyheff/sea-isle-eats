@@ -10,6 +10,7 @@ import {
   ArrowLeft,
   CreditCard,
   Banknote,
+  BadgeCheck,
 } from "lucide-react";
 import { getRestaurantById } from "@/lib/data";
 import { restaurantJsonLd } from "@/lib/jsonld";
@@ -93,6 +94,13 @@ export default async function RestaurantDetail({
               {r.name}
             </h1>
             {meta && <div className="mt-2 text-ink/55">{meta}</div>}
+            {r.owner_verified && (
+              <div className="mt-2">
+                <Badge tone="teal">
+                  <BadgeCheck size={12} /> Owner-verified
+                </Badge>
+              </div>
+            )}
           </div>
           {r.rating != null && (
             <div className="flex items-center gap-1 text-coral font-semibold shrink-0">

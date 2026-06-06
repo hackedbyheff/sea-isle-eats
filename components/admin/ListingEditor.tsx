@@ -226,6 +226,11 @@ export function ListingEditor({
               label="Featured"
               onClick={() => set("featured", !draft.featured)}
             />
+            <Toggle
+              on={!!draft.owner_verified}
+              label="Owner-verified"
+              onClick={() => set("owner_verified", !draft.owner_verified)}
+            />
           </div>
         </div>
 

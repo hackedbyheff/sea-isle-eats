@@ -38,6 +38,8 @@ export interface Restaurant {
   notes: string | null; // internal call-log / admin notes (not public)
   status: ListingStatus;
   published: boolean;
+  /** True once an owner/manager has claimed the listing and confirmed its info. */
+  owner_verified: boolean;
   /** Field names a human edited; the Google sync must skip these columns. */
   locked_fields: string[];
   last_verified_at: string | null;

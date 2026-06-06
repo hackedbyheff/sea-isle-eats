@@ -39,6 +39,7 @@ export const SHEET_COLUMNS = [
   "notes",
   "status",
   "published",
+  "owner_verified",
   ...DAY_COLS,
 ] as const;
 
@@ -102,6 +103,7 @@ export function dbRowToSheetRow(r: Restaurant): SheetRow {
     notes: r.notes ?? "",
     status: r.status,
     published: String(!!r.published).toUpperCase(),
+    owner_verified: String(!!r.owner_verified).toUpperCase(),
   };
   DAY_COLS.forEach((col, day) => {
     const entry = r.hours?.find((h) => h.day === day);
@@ -144,6 +146,7 @@ export function buildUpdateFromSheetRow(
     update.status = row.status.trim();
   }
   update.published = parseBool(row.published) ?? false;
+  update.owner_verified = parseBool(row.owner_verified) ?? false;
   update.hours = sheetRowToHours(row);
 
   // Lock any Google-managed field whose value changed vs the DB.

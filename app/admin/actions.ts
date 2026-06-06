@@ -42,6 +42,7 @@ const EDITABLE_COLUMNS = [
   "status",
   "published",
   "featured",
+  "owner_verified",
   "locked_fields",
 ] as const;
 

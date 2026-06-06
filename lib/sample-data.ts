@@ -42,6 +42,7 @@ function make(partial: Partial<Restaurant> & Pick<Restaurant, "id" | "name">): R
     status: "verified",
     published: true,
     featured: false,
+    owner_verified: false,
     locked_fields: [],
     last_verified_at: NOW,
     created_at: NOW,
@@ -82,6 +83,7 @@ export const SAMPLE_RESTAURANTS: Restaurant[] = [
     menu_url: "https://example.com/marina-raw-bar-menu",
     order_url: "https://example.com/marina-raw-bar-order",
     featured: true, // sponsored — sorts first
+    owner_verified: true,
     hours: everyDay([["12:00", "23:00"]]),
   }),
   make({

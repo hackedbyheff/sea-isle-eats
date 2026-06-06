@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Phone, Clock, CreditCard, Banknote, ShoppingBag, Star } from "lucide-react";
+import { Phone, Clock, CreditCard, Banknote, ShoppingBag, Star, BadgeCheck } from "lucide-react";
 import type { Restaurant } from "@/lib/types";
 import { priceLabel, parseCuisines } from "@/lib/format";
 import { isOpenNow, todayHoursLabel, type NowInET } from "@/lib/hours";
@@ -64,6 +64,11 @@ export function RestaurantCard({
       </div>
 
       <div className="mt-3 flex flex-wrap gap-1.5">
+        {r.owner_verified && (
+          <Badge tone="teal">
+            <BadgeCheck size={12} /> Owner-verified
+          </Badge>
+        )}
         {r.accepts_cards === true && (
           <Badge tone="sand">
             <CreditCard size={12} /> Cards
