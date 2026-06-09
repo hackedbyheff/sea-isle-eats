@@ -51,6 +51,7 @@ Edit cells directly. Key columns:
 | `dine_in` | `TRUE` / `FALSE` (sit-down available) |
 | `takeout` | `TRUE` / `FALSE` |
 | `delivery` | `TRUE` / `FALSE` |
+| `byob` | `TRUE` / `FALSE` — bring your own bottle |
 | `menu_url` | Link to their menu (Facebook / Instagram / website) |
 | `order_url` | Link to their online ordering, if any |
 | `website_url` | Their website |
@@ -65,7 +66,12 @@ Edit cells directly. Key columns:
 
 Most fields (cuisine, hours, payment, dine-in/takeout/delivery) are pre-filled
 from Google — your job is to verify and correct them, and add the things Google
-doesn't give us (menu/order links, website & social links, owner-verified).
+doesn't give us (menu/order links, website & social links, owner-verified, BYOB).
+
+**Overriding Google:** Google isn't always right. If a place delivers but Google
+doesn't list it (e.g. Bubba Dogs), just type the correct `TRUE`/`FALSE` in that
+column and Push — your value sticks and the nightly Google sync won't overwrite
+it. Same for hours, cuisine, payment, etc.
 
 **Hours:** each day is its own column, 24-hour time.
 - Open 11am–10pm → `11:00-22:00`
