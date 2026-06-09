@@ -1,5 +1,5 @@
 import "server-only";
-import type { Restaurant } from "./types";
+import type { City, Restaurant } from "./types";
 import { SAMPLE_RESTAURANTS } from "./sample-data";
 import { createClient } from "./supabase/server";
 
@@ -25,7 +25,7 @@ function samplePublished(): Restaurant[] {
  * are no published rows, so the UI is fully verifiable before go-live. Once you
  * add env keys and publish real rows, those take over automatically.
  */
-export async function getPublishedRestaurants(): Promise<{
+export async function getPublishedRestaurants(city?: City): Promise<{
   restaurants: Restaurant[];
   usingSample: boolean;
 }> {
@@ -35,20 +35,18 @@ export async function getPublishedRestaurants(): Promise<{
 
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
-      .from("restaurants")
-      .select("*")
-      .eq("published", true)
+    let query = supabase.from("restaurants").select("*").eq("published", true);
+    if (city) query = query.eq("city_id", city.id); // scope to this market
+    const { data, error } = await query
       .order("featured", { ascending: false })
       .order("name", { ascending: true });
 
     if (error) throw error;
-    if (!data || data.length === 0) {
-      return { restaurants: samplePublished(), usingSample: true };
-    }
-    return { restaurants: data as Restaurant[], usingSample: false };
+    // Configured DB is the source of truth — an empty city shows an empty list,
+    // not sample data. (Sample fallback is only for the not-configured case.)
+    return { restaurants: (data as Restaurant[]) ?? [], usingSample: false };
   } catch {
-    return { restaurants: SAMPLE_RESTAURANTS, usingSample: true };
+    return { restaurants: samplePublished(), usingSample: true };
   }
 }
 
