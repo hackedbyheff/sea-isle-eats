@@ -1,11 +1,32 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { getPublishedRestaurants } from "@/lib/data";
-import { getActiveCities, getCurrentCity, getNeighborhoods } from "@/lib/cities";
-import { BRAND_NAME } from "@/lib/config";
+import { cityUrl, getActiveCities, getCurrentCity, getNeighborhoods } from "@/lib/cities";
+import { BRAND_NAME, PLATFORM_DOMAIN } from "@/lib/config";
 import { Directory } from "@/components/Directory";
 import { CityPicker } from "@/components/CityPicker";
 import { Footer } from "@/components/Footer";
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+  const sp = await searchParams;
+  const city = await getCurrentCity(typeof sp.city === "string" ? sp.city : null);
+  if (!city) {
+    return { alternates: { canonical: `https://${PLATFORM_DOMAIN}` } };
+  }
+  const place = [city.name, city.state].filter(Boolean).join(", ");
+  const base = cityUrl(city);
+  return {
+    title: { absolute: `${city.name} — ${BRAND_NAME}` },
+    description: `Every kitchen in ${place} — who's open, who takes cards, and who you can order from direct.`,
+    alternates: { canonical: base },
+    openGraph: { title: `${city.name} — ${BRAND_NAME}`, url: base },
+  };
+}
 
 export default async function Home({
   searchParams,

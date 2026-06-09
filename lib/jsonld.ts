@@ -16,7 +16,10 @@ const DAY_NAMES = [
  * Build schema.org Restaurant JSON-LD for a listing. Rendered in a
  * <script type="application/ld+json"> on the detail page for SEO.
  */
-export function restaurantJsonLd(r: Restaurant): Record<string, unknown> {
+export function restaurantJsonLd(
+  r: Restaurant,
+  baseUrl: string = SITE_URL,
+): Record<string, unknown> {
   const openingHours =
     r.hours?.flatMap((entry) =>
       entry.ranges.map((range) => ({
@@ -31,7 +34,7 @@ export function restaurantJsonLd(r: Restaurant): Record<string, unknown> {
     "@context": "https://schema.org",
     "@type": "Restaurant",
     name: r.name,
-    url: `${SITE_URL}/r/${r.id}`,
+    url: `${baseUrl}/r/${r.id}`,
   };
 
   const cuisines = parseCuisines(r.cuisine);

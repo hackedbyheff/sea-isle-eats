@@ -21,10 +21,10 @@ import {
   ChefHat,
 } from "lucide-react";
 import { getRestaurantById } from "@/lib/data";
-import { getCurrentCity } from "@/lib/cities";
+import { cityUrl, getCurrentCity } from "@/lib/cities";
 import { restaurantJsonLd } from "@/lib/jsonld";
 import { priceLabel, parseCuisines } from "@/lib/format";
-import { SITE_LOCATION, SITE_NAME } from "@/lib/config";
+import { BRAND_NAME, SITE_LOCATION, SITE_URL } from "@/lib/config";
 import { RestaurantHours } from "@/components/RestaurantHours";
 import { AdBanner } from "@/components/AdBanner";
 import { OrderDirectNote } from "@/components/OrderDirectNote";
@@ -39,23 +39,25 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const r = await getRestaurantById(id);
+  const [r, city] = await Promise.all([getRestaurantById(id), getCurrentCity()]);
   if (!r) return { title: "Not found" };
+  const base = city ? cityUrl(city) : SITE_URL;
+  const loc = city ? [city.name, city.state].filter(Boolean).join(", ") : SITE_LOCATION;
   const bits = [...parseCuisines(r.cuisine), priceLabel(r.price_level)]
     .filter(Boolean)
     .join(" · ");
   const description =
     r.description ??
-    `${r.name}${bits ? ` (${bits})` : ""} in ${SITE_LOCATION}. Hours, payment, and where to see the menu.`;
-  const url = `/r/${r.id}`;
+    `${r.name}${bits ? ` (${bits})` : ""} in ${loc}. Hours, payment, and where to order direct.`;
+  const url = `${base}/r/${r.id}`;
   return {
-    title: r.name, // template appends " — Sea Isle Eats"
+    title: { absolute: `${r.name} — ${BRAND_NAME}` },
     description,
     alternates: { canonical: url },
     openGraph: {
       type: "website",
-      siteName: SITE_NAME,
-      title: `${r.name} — ${SITE_NAME}`,
+      siteName: BRAND_NAME,
+      title: `${r.name} — ${BRAND_NAME}`,
       description,
       url,
     },
@@ -83,7 +85,11 @@ export default async function RestaurantDetail({
       <script
         type="application/ld+json"
         // schema.org Restaurant structured data for SEO
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantJsonLd(r)) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            restaurantJsonLd(r, currentCity ? cityUrl(currentCity) : undefined),
+          ),
+        }}
       />
 
       <main className="mx-auto max-w-3xl px-5 py-10">
