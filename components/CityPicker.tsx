@@ -1,4 +1,5 @@
-import { MapPin } from "lucide-react";
+import Link from "next/link";
+import { MapPin, Store, Utensils } from "lucide-react";
 import type { City } from "@/lib/types";
 import { cityUrl } from "@/lib/cities";
 import { Footer } from "./Footer";
@@ -20,8 +21,8 @@ export function CityPicker({ cities }: { cities: City[] }) {
             Click Click <span className="italic text-coral">Eat</span>
           </h1>
           <p className="mt-3 max-w-xl text-ink/70 text-lg font-light">
-            Local dining guides — who&apos;s open, who takes cards, and where to
-            order direct from the restaurant. Pick your town.
+            Click your city. Click your spot. Eat. Local dining guides that send
+            you straight to the restaurant — find local, order direct.
           </p>
         </div>
       </header>
@@ -64,6 +65,35 @@ export function CityPicker({ cities }: { cities: City[] }) {
             ))}
           </div>
         )}
+
+        {/* How it works */}
+        <section className="mt-12">
+          <h2 className="text-[11px] font-semibold uppercase tracking-wide text-ink/50 mb-3">
+            How it works
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[
+              { n: "1", icon: MapPin, t: "Click your city", d: "Start where you are." },
+              { n: "2", icon: Store, t: "Click the restaurant", d: "Local spots, not sponsored chains." },
+              { n: "3", icon: Utensils, t: "Eat", d: "Order direct from the restaurant." },
+            ].map((s) => (
+              <div key={s.n} className="rounded-2xl bg-white border border-ink/10 p-5">
+                <s.icon className="text-teal" size={20} />
+                <h3 className="mt-2 font-display text-xl font-semibold leading-tight">
+                  {s.t}
+                </h3>
+                <p className="mt-1 text-sm text-ink/70">{s.d}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-sm text-ink/60">
+            No middleman fees, no commission skimmed from the kitchen — we point you
+            to the door and step aside.{" "}
+            <Link href="/about" className="font-semibold text-coral hover:underline">
+              Why we built this →
+            </Link>
+          </p>
+        </section>
       </main>
 
       <Footer />
