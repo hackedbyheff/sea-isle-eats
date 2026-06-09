@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
-import type { Restaurant } from "@/lib/types";
+import type { Neighborhood, Restaurant } from "@/lib/types";
 import { getEasternNow, isLateNightOn, isOpenNow, type NowInET } from "@/lib/hours";
 import { parseCuisines } from "@/lib/format";
 import { GRID_AD_INTERVAL, GRID_AD_MAX, gridSponsorsForCity } from "@/lib/ads";
@@ -15,10 +15,12 @@ export function Directory({
   restaurants,
   citySlug,
   bannerSeed,
+  neighborhoods = [],
 }: {
   restaurants: Restaurant[];
   citySlug?: string | null;
   bannerSeed?: number;
+  neighborhoods?: Neighborhood[];
 }) {
   const gridSponsors = gridSponsorsForCity(citySlug);
   const [query, setQuery] = useState("");
@@ -29,6 +31,7 @@ export function Directory({
   const [lateNight, setLateNight] = useState(false);
   const [deliveryOnly, setDeliveryOnly] = useState(false);
   const [byobOnly, setByobOnly] = useState(false);
+  const [neighborhood, setNeighborhood] = useState("all");
 
   // "now" is anchored to America/New_York. Computed after mount to avoid a
   // server/client hydration mismatch on the open/closed state.
@@ -56,6 +59,7 @@ export function Directory({
         if (onlineOnly && !r.online_ordering) return false;
         if (deliveryOnly && r.delivery !== true) return false;
         if (byobOnly && r.byob !== true) return false;
+        if (neighborhood !== "all" && r.neighborhood_id !== neighborhood) return false;
         if (openNow && !(now && isOpenNow(r.hours, now))) return false;
         if (lateNight && !(now && isLateNightOn(r.hours, now.day))) return false;
         return true;
@@ -75,7 +79,7 @@ export function Directory({
         // 4) Alphabetical tiebreaker
         return a.name.localeCompare(b.name);
       });
-  }, [restaurants, query, cuisine, cardsOnly, onlineOnly, deliveryOnly, byobOnly, openNow, lateNight, now]);
+  }, [restaurants, query, cuisine, cardsOnly, onlineOnly, deliveryOnly, byobOnly, neighborhood, openNow, lateNight, now]);
 
   return (
     <>
@@ -97,6 +101,27 @@ export function Directory({
           />
         )}
       </div>
+
+      {/* Neighborhood filter (only for cities that define areas) */}
+      {neighborhoods.length > 0 && (
+        <div className="pt-5 flex flex-wrap gap-2 items-center">
+          <span className="mr-1 text-[11px] font-semibold uppercase tracking-wide text-ink/40">
+            Area
+          </span>
+          <FilterChip active={neighborhood === "all"} onClick={() => setNeighborhood("all")}>
+            All areas
+          </FilterChip>
+          {neighborhoods.map((n) => (
+            <FilterChip
+              key={n.id}
+              active={neighborhood === n.id}
+              onClick={() => setNeighborhood(n.id)}
+            >
+              {n.name}
+            </FilterChip>
+          ))}
+        </div>
+      )}
 
       {/* Filters */}
       <div className="py-5 flex flex-wrap gap-2 items-center">

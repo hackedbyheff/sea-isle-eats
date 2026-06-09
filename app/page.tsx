@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { getPublishedRestaurants } from "@/lib/data";
-import { getActiveCities, getCurrentCity } from "@/lib/cities";
+import { getActiveCities, getCurrentCity, getNeighborhoods } from "@/lib/cities";
 import { BRAND_NAME } from "@/lib/config";
 import { Directory } from "@/components/Directory";
 import { CityPicker } from "@/components/CityPicker";
@@ -23,6 +23,7 @@ export default async function Home({
   }
 
   const { restaurants, usingSample } = await getPublishedRestaurants(city);
+  const neighborhoods = await getNeighborhoods(city.id);
   const place = [city.name, city.state].filter(Boolean).join(", ");
   // Rotate the banner per request among this city's sponsors.
   const bannerSeed = Math.floor(Math.random() * 100000);
@@ -64,6 +65,7 @@ export default async function Home({
           restaurants={restaurants}
           citySlug={city.slug}
           bannerSeed={bannerSeed}
+          neighborhoods={neighborhoods}
         />
       </main>
 

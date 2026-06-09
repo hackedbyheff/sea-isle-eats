@@ -1,6 +1,6 @@
 import "server-only";
 import { headers } from "next/headers";
-import type { City } from "./types";
+import type { City, Neighborhood } from "./types";
 import { createClient } from "./supabase/server";
 import { CITY_CUSTOM_DOMAIN, CITY_DOMAINS, PLATFORM_DOMAIN } from "./config";
 
@@ -85,6 +85,24 @@ export async function getCityBySlug(slug: string): Promise<City | null> {
     return (data as City | null) ?? null;
   } catch {
     return slug === SAMPLE_CITY.slug ? SAMPLE_CITY : null;
+  }
+}
+
+/** Active neighborhoods for a city (empty for cities that don't use them). */
+export async function getNeighborhoods(cityId: string): Promise<Neighborhood[]> {
+  if (!supabaseConfigured()) return [];
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("neighborhoods")
+      .select("*")
+      .eq("city_id", cityId)
+      .eq("active", true)
+      .order("name", { ascending: true });
+    if (error) throw error;
+    return (data as Neighborhood[]) ?? [];
+  } catch {
+    return [];
   }
 }
 

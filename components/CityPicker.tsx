@@ -2,6 +2,7 @@ import { MapPin } from "lucide-react";
 import type { City } from "@/lib/types";
 import { cityUrl } from "@/lib/cities";
 import { Footer } from "./Footer";
+import { NearestCity } from "./NearestCity";
 
 /**
  * Landing page shown at the bare platform domain (clickclickeat.com) or any
@@ -26,6 +27,15 @@ export function CityPicker({ cities }: { cities: City[] }) {
       </header>
 
       <main className="mx-auto max-w-3xl px-5 py-8">
+        <NearestCity
+          cities={cities.map((c) => ({
+            name: c.name,
+            state: c.state,
+            lat: c.lat,
+            lng: c.lng,
+            url: cityUrl(c),
+          }))}
+        />
         <h2 className="text-[11px] font-semibold uppercase tracking-wide text-ink/50 mb-3">
           Pick your city
         </h2>
