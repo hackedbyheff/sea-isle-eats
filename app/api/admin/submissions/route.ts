@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getCityBySlug } from "@/lib/cities";
 
 export const dynamic = "force-dynamic";
 
@@ -31,17 +32,24 @@ export async function GET(request: Request) {
 
   try {
     const supabase = createAdminClient();
+    // Optional ?city=<slug> scopes submissions to one market.
+    const slug = new URL(request.url).searchParams.get("city");
+    const city = slug ? await getCityBySlug(slug) : null;
+    if (slug && !city) {
+      return NextResponse.json({ error: `Unknown city: ${slug}` }, { status: 400 });
+    }
+    // Inner-join restaurants so we can filter by city; embed name + city_id.
+    const rel = city ? "restaurants!inner(name, city_id)" : "restaurants(name)";
+
+    const sugQ = supabase.from("suggestions").select(`*, ${rel}`).eq("status", "pending");
+    const claimQ = supabase.from("listing_claims").select(`*, ${rel}`).eq("status", "pending");
+    if (city) {
+      sugQ.eq("restaurants.city_id", city.id);
+      claimQ.eq("restaurants.city_id", city.id);
+    }
     const [sug, claim] = await Promise.all([
-      supabase
-        .from("suggestions")
-        .select("*, restaurants(name)")
-        .eq("status", "pending")
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("listing_claims")
-        .select("*, restaurants(name)")
-        .eq("status", "pending")
-        .order("created_at", { ascending: false }),
+      sugQ.order("created_at", { ascending: false }),
+      claimQ.order("created_at", { ascending: false }),
     ]);
     if (sug.error) throw sug.error;
     if (claim.error) throw claim.error;

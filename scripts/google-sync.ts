@@ -2,7 +2,8 @@
  * Standalone Google Places sync — useful for the initial bulk seed and for
  * scheduled/seasonal refreshes (no browser, no serverless time limit).
  *
- * Run:  npx tsx scripts/google-sync.ts
+ * Run all active cities:  npx tsx scripts/google-sync.ts
+ * Run one city:           npx tsx scripts/google-sync.ts sea-isle-city
  *
  * Reads .env.local (NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
  * GOOGLE_PLACES_API_KEY). Uses the service-role key, so it bypasses RLS — run
@@ -11,7 +12,8 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
-import { runGoogleSync, SEARCH_QUERY } from "../lib/google-sync";
+import type { City } from "../lib/types";
+import { runGoogleSync, searchQueryFor } from "../lib/google-sync";
 
 // Minimal .env.local loader (no extra dependency).
 try {
@@ -41,16 +43,33 @@ const supabase = createClient(url, serviceKey, {
   auth: { persistSession: false, autoRefreshToken: false },
 });
 
+const slug = process.argv[2]; // optional city slug
+
 (async () => {
-  console.log(`Searching: "${SEARCH_QUERY}"…`);
-  const result = await runGoogleSync(supabase, apiKey);
-  console.log("Sync complete:");
-  console.log(`  created:        ${result.created}`);
-  console.log(`  updated:        ${result.updated}`);
-  console.log(`  skipped-locked: ${result.skippedLocked} rows (${result.lockedFieldsSkipped} fields)`);
-  console.log(`  out-of-area:    ${result.skippedOutOfArea} (not 08243)`);
-  if (result.errors.length) {
-    console.log(`  errors (${result.errors.length}):`);
-    result.errors.forEach((e) => console.log(`    - ${e}`));
+  // Pick target cities: one (by slug) or all active.
+  let q = supabase.from("cities").select("*").eq("active", true);
+  if (slug) q = supabase.from("cities").select("*").eq("slug", slug);
+  const { data, error } = await q.order("name");
+  if (error) {
+    console.error("Couldn't load cities:", error.message);
+    process.exit(1);
+  }
+  const cities = (data as City[]) ?? [];
+  if (!cities.length) {
+    console.error(slug ? `No city with slug "${slug}".` : "No active cities.");
+    process.exit(1);
+  }
+
+  for (const city of cities) {
+    console.log(`\n=== ${city.name} — "${searchQueryFor(city)}" ===`);
+    const result = await runGoogleSync(supabase, apiKey, city);
+    console.log(`  created:        ${result.created}`);
+    console.log(`  updated:        ${result.updated}`);
+    console.log(`  skipped-locked: ${result.skippedLocked} rows (${result.lockedFieldsSkipped} fields)`);
+    console.log(`  out-of-area:    ${result.skippedOutOfArea}`);
+    if (result.errors.length) {
+      console.log(`  errors (${result.errors.length}):`);
+      result.errors.forEach((e) => console.log(`    - ${e}`));
+    }
   }
 })();

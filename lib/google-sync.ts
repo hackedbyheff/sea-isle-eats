@@ -1,17 +1,22 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Hours, HoursRange } from "./types";
+import type { City, Hours, HoursRange } from "./types";
 import { getPlaceDetails, searchAllPlaceIds, type PlaceDetails } from "./google-places";
 
-export const SEARCH_QUERY = "restaurants in Sea Isle City NJ";
+/** The Places text-search query for a city (explicit, or built from name/state). */
+export function searchQueryFor(city: City): string {
+  if (city.search_query && city.search_query.trim()) return city.search_query.trim();
+  return `restaurants in ${city.name}${city.state ? `, ${city.state}` : ""}`;
+}
 
-// Coverage scope: strict 08243 (Sea Isle City). Google's text search returns
-// neighboring towns too, so we drop anything that isn't in the zip / city.
-export const SCOPE_ZIP = "08243";
-export const SCOPE_CITY = "Sea Isle City";
-
-function inScope(address: unknown): boolean {
+/**
+ * Is an address within a city's coverage scope? Google's text search returns
+ * neighboring towns, so we keep only addresses matching the city's zip(s) or
+ * its name.
+ */
+function inCityScope(address: unknown, city: City): boolean {
   if (typeof address !== "string") return false;
-  return address.includes(SCOPE_ZIP) || address.includes(SCOPE_CITY);
+  if (city.zips?.some((z) => address.includes(z))) return true;
+  return address.includes(city.name);
 }
 
 export interface SyncResult {
@@ -133,6 +138,7 @@ export function mapPlaceToColumns(details: PlaceDetails): Record<string, unknown
 export async function runGoogleSync(
   supabase: SupabaseClient,
   apiKey: string,
+  city: City,
 ): Promise<SyncResult> {
   const result: SyncResult = {
     created: 0,
@@ -143,7 +149,7 @@ export async function runGoogleSync(
     errors: [],
   };
 
-  const ids = await searchAllPlaceIds(apiKey, SEARCH_QUERY);
+  const ids = await searchAllPlaceIds(apiKey, searchQueryFor(city));
   if (ids.length === 0) return result;
 
   // Existing rows keyed by place id (for locked_fields + create/update split).
@@ -175,8 +181,8 @@ export async function runGoogleSync(
         continue;
       }
 
-      // Strict 08243 scope — drop neighboring-town results.
-      if (!inScope(mapped.address)) {
+      // City scope — drop neighboring-town results.
+      if (!inCityScope(mapped.address, city)) {
         result.skippedOutOfArea++;
         continue;
       }
@@ -184,10 +190,11 @@ export async function runGoogleSync(
       const found = existing.get(placeId);
 
       if (!found) {
-        // New listing — unverified + unpublished, awaiting a human pass.
+        // New listing — scoped to this city, unverified + unpublished.
         const { error } = await supabase.from("restaurants").insert({
           google_place_id: placeId,
           ...mapped,
+          city_id: city.id,
           status: "unverified",
           published: false,
         });

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { Restaurant } from "@/lib/types";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getCityBySlug } from "@/lib/cities";
 import { SHEET_COLUMNS, dbRowToSheetRow } from "@/lib/sheet-sync";
 
 export const dynamic = "force-dynamic";
@@ -18,10 +19,16 @@ export async function GET(request: Request) {
 
   try {
     const supabase = createAdminClient();
-    const { data, error } = await supabase
-      .from("restaurants")
-      .select("*")
-      .order("name", { ascending: true });
+    // Optional ?city=<slug> scopes the sheet to one market.
+    const slug = new URL(request.url).searchParams.get("city");
+    const city = slug ? await getCityBySlug(slug) : null;
+    if (slug && !city) {
+      return NextResponse.json({ error: `Unknown city: ${slug}` }, { status: 400 });
+    }
+
+    let q = supabase.from("restaurants").select("*");
+    if (city) q = q.eq("city_id", city.id);
+    const { data, error } = await q.order("name", { ascending: true });
     if (error) throw error;
 
     const rows = (data as Restaurant[]).map(dbRowToSheetRow);

@@ -28,15 +28,20 @@ function _config() {
   var props = PropertiesService.getScriptProperties();
   var url = props.getProperty('SITE_URL');
   var secret = props.getProperty('SYNC_SECRET');
+  var city = props.getProperty('CITY'); // optional: scope this sheet to one city slug
   if (!url || !secret) {
     throw new Error('Set SITE_URL and SYNC_SECRET in Project Settings → Script properties.');
   }
-  return { url: url.replace(/\/$/, ''), secret: secret };
+  return { url: url.replace(/\/$/, ''), secret: secret, city: city || '' };
+}
+
+function _cityQS(cfg) {
+  return cfg.city ? ('?city=' + encodeURIComponent(cfg.city)) : '';
 }
 
 function pullFromSite() {
   var cfg = _config();
-  var res = UrlFetchApp.fetch(cfg.url + '/api/admin/export', {
+  var res = UrlFetchApp.fetch(cfg.url + '/api/admin/export' + _cityQS(cfg), {
     headers: { 'x-sync-secret': cfg.secret },
     muteHttpExceptions: true,
   });
@@ -91,7 +96,7 @@ function pushToSite() {
 // "Submissions" tab (created if it doesn't exist). Read-only inbox.
 function pullSubmissions() {
   var cfg = _config();
-  var res = UrlFetchApp.fetch(cfg.url + '/api/admin/submissions', {
+  var res = UrlFetchApp.fetch(cfg.url + '/api/admin/submissions' + _cityQS(cfg), {
     headers: { 'x-sync-secret': cfg.secret }, muteHttpExceptions: true,
   });
   if (res.getResponseCode() !== 200) {
