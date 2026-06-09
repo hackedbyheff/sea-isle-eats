@@ -178,6 +178,11 @@ export function ListingEditor({
               label="BYOB"
               onClick={() => set("byob", !draft.byob)}
             />
+            <Toggle
+              on={!!draft.catering}
+              label="Catering"
+              onClick={() => set("catering", !draft.catering)}
+            />
           </div>
 
           <Field label="Menu link (FB / Insta / website)">
@@ -192,6 +197,14 @@ export function ListingEditor({
             <input
               value={draft.order_url ?? ""}
               onChange={(e) => set("order_url", e.target.value || null)}
+              placeholder="https://…"
+              className="inp"
+            />
+          </Field>
+          <Field label="Catering link (first-party only)">
+            <input
+              value={draft.catering_url ?? ""}
+              onChange={(e) => set("catering_url", e.target.value || null)}
               placeholder="https://…"
               className="inp"
             />

@@ -18,8 +18,10 @@ import {
   Package,
   Car,
   Wine,
+  ChefHat,
 } from "lucide-react";
 import { getRestaurantById } from "@/lib/data";
+import { getCurrentCity } from "@/lib/cities";
 import { restaurantJsonLd } from "@/lib/jsonld";
 import { priceLabel, parseCuisines } from "@/lib/format";
 import { SITE_LOCATION, SITE_NAME } from "@/lib/config";
@@ -68,6 +70,7 @@ export default async function RestaurantDetail({
   const { id } = await params;
   const r = await getRestaurantById(id);
   if (!r) notFound();
+  const currentCity = await getCurrentCity();
 
   const price = priceLabel(r.price_level);
   const meta = [...parseCuisines(r.cuisine), price].filter(Boolean).join(" · ");
@@ -142,6 +145,16 @@ export default async function RestaurantDetail({
               className="inline-flex items-center gap-2 rounded-full bg-coral text-white px-5 py-2.5 text-sm font-semibold hover:brightness-110"
             >
               <ShoppingBag size={15} /> Order Online
+            </a>
+          )}
+          {r.catering_url && (
+            <a
+              href={r.catering_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-teal text-white px-5 py-2.5 text-sm font-semibold hover:brightness-110"
+            >
+              <ChefHat size={15} /> Order Catering
             </a>
           )}
         </div>
@@ -223,6 +236,11 @@ export default async function RestaurantDetail({
               <Wine size={12} /> BYOB
             </Badge>
           )}
+          {r.catering && (
+            <Badge tone="sand">
+              <ChefHat size={12} /> Catering
+            </Badge>
+          )}
         </div>
 
         {/* Hours + contact */}
@@ -264,9 +282,9 @@ export default async function RestaurantDetail({
           </section>
         </div>
 
-        {/* Sponsor slot — rotates by restaurant id (stable per page) */}
+        {/* Sponsor slot — this city's sponsors, stable per restaurant */}
         <div className="mt-8">
-          <AdBanner seed={r.id} />
+          <AdBanner citySlug={currentCity?.slug} seed={r.id} />
         </div>
 
         {/* Public forms */}

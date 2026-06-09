@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MapPin, Phone, ArrowLeft } from "lucide-react";
-import { LOCAL_BUSINESSES } from "@/lib/ads";
+import { sponsorsForCity } from "@/lib/ads";
+import { getCurrentCity } from "@/lib/cities";
 import { ADS_CONTACT_EMAIL, SITE_LOCATION } from "@/lib/config";
 import { Footer } from "@/components/Footer";
 
@@ -12,7 +13,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/local" },
 };
 
-export default function LocalPage() {
+export default async function LocalPage() {
+  const city = await getCurrentCity();
+  const businesses = sponsorsForCity(city?.slug);
   return (
     <div className="min-h-screen w-full bg-page text-ink">
       <header className="grain border-b-2 border-ink">
@@ -35,7 +38,7 @@ export default function LocalPage() {
 
       <main className="mx-auto max-w-5xl px-5 py-8">
         <div className="grid gap-4 sm:grid-cols-2">
-          {LOCAL_BUSINESSES.map((b) => (
+          {businesses.map((b) => (
             <a
               key={b.id}
               href={b.url}

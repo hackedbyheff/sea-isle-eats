@@ -61,6 +61,8 @@ export interface Restaurant {
   takeout: boolean | null;
   delivery: boolean | null;
   byob: boolean | null;
+  catering: boolean | null;
+  catering_url: string | null; // first-party catering order/info link
   menu_url: string | null;
   order_url: string | null;
   website_url: string | null;

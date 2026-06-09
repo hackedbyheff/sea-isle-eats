@@ -24,6 +24,8 @@ export default async function Home({
 
   const { restaurants, usingSample } = await getPublishedRestaurants(city);
   const place = [city.name, city.state].filter(Boolean).join(", ");
+  // Rotate the banner per request among this city's sponsors.
+  const bannerSeed = Math.floor(Math.random() * 100000);
 
   return (
     <div className="min-h-screen w-full bg-page text-ink">
@@ -58,7 +60,11 @@ export default async function Home({
             listings to see live data here.
           </div>
         )}
-        <Directory restaurants={restaurants} bannerSponsorId="verde-colab" />
+        <Directory
+          restaurants={restaurants}
+          citySlug={city.slug}
+          bannerSeed={bannerSeed}
+        />
       </main>
 
       <Footer />

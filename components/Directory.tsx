@@ -5,7 +5,7 @@ import { Search, X } from "lucide-react";
 import type { Restaurant } from "@/lib/types";
 import { getEasternNow, isLateNightOn, isOpenNow, type NowInET } from "@/lib/hours";
 import { parseCuisines } from "@/lib/format";
-import { GRID_AD_INTERVAL, GRID_AD_MAX, GRID_SPONSORS } from "@/lib/ads";
+import { GRID_AD_INTERVAL, GRID_AD_MAX, gridSponsorsForCity } from "@/lib/ads";
 import { FilterChip } from "./FilterChip";
 import { RestaurantCard } from "./RestaurantCard";
 import { SponsorCard } from "./SponsorCard";
@@ -13,11 +13,14 @@ import { AdBanner } from "./AdBanner";
 
 export function Directory({
   restaurants,
-  bannerSponsorId,
+  citySlug,
+  bannerSeed,
 }: {
   restaurants: Restaurant[];
-  bannerSponsorId?: string;
+  citySlug?: string | null;
+  bannerSeed?: number;
 }) {
+  const gridSponsors = gridSponsorsForCity(citySlug);
   const [query, setQuery] = useState("");
   const [cuisine, setCuisine] = useState("All");
   const [openNow, setOpenNow] = useState(false);
@@ -123,8 +126,8 @@ export function Directory({
         </FilterChip>
       </div>
 
-      {/* Banner ad slot (home pins one sponsor) */}
-      <AdBanner sponsorId={bannerSponsorId} />
+      {/* Banner ad slot — sponsors for this city (rotates) */}
+      <AdBanner citySlug={citySlug} seed={bannerSeed} />
 
       {/* Listings */}
       <div className="text-sm text-ink/50 mt-6 mb-3">
@@ -138,12 +141,12 @@ export function Directory({
             out.push(<RestaurantCard key={r.id} restaurant={r} now={now} />);
             const atInterval = (i + 1) % GRID_AD_INTERVAL === 0;
             if (
-              GRID_SPONSORS.length &&
+              gridSponsors.length &&
               atInterval &&
               adIdx < GRID_AD_MAX &&
               i + 1 < filtered.length
             ) {
-              const biz = GRID_SPONSORS[adIdx % GRID_SPONSORS.length];
+              const biz = gridSponsors[adIdx % gridSponsors.length];
               adIdx++;
               out.push(<SponsorCard key={`ad-${i}`} business={biz} />);
             }

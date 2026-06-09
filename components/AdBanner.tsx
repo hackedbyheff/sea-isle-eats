@@ -1,19 +1,19 @@
-import { getSponsor, pickBannerSponsor } from "@/lib/ads";
+import { pickBannerSponsor } from "@/lib/ads";
 import { Badge } from "./Badge";
 
 /**
- * Banner ad slot. Pass `sponsorId` to pin a specific sponsor (e.g. the home
- * page → Verde Colab). Otherwise pass a `seed` (e.g. a restaurant id) for a
- * stable, evenly-distributed rotating choice; omit both for random.
+ * Banner ad slot. Shows a sponsor for the given city (national + that city's
+ * locals). Pass a `seed` (e.g. a restaurant id) for a stable rotating choice;
+ * omit it for random.
  */
 export function AdBanner({
+  citySlug,
   seed,
-  sponsorId,
 }: {
+  citySlug?: string | null;
   seed?: string | number;
-  sponsorId?: string;
 }) {
-  const sponsor = (sponsorId && getSponsor(sponsorId)) || pickBannerSponsor(seed);
+  const sponsor = pickBannerSponsor(citySlug, seed);
 
   if (!sponsor) {
     return (

@@ -1,26 +1,30 @@
 /**
- * Ad / sponsor slots. Ads are sold to non-restaurant local businesses
- * (rentals, realtors, shops, services). Everything here is data — edit this
- * file to add, remove, or reorder sponsors. No code changes needed elsewhere.
+ * Ad / sponsors. Edit this one file to place sponsors:
+ *   - national: true        → shows in every city
+ *   - cities: ['nashville'] → shows only in those city slugs
+ * A sponsor with neither shows nowhere (handy for drafts).
+ *
+ * Ads are sold to non-restaurant local businesses (rentals, realtors, shops,
+ * services). `banner` = eligible for the rotating banner; `featured` = eligible
+ * for the in-grid sponsored card + the Sponsors page.
  */
 
 export interface Sponsor {
   id: string;
   name: string;
-  category: string; // shown as the "Sponsored · {category}" label
+  category: string;
   tagline: string;
   url: string;
-  /** Banner CTA label. Defaults to "Visit {name}". */
   cta?: string;
   phone?: string;
   address?: string;
-  /** featured = eligible for in-grid placement on the directory + /local. */
   featured?: boolean;
-  /** banner = include in the rotating banner (directory + restaurant pages). */
   banner?: boolean;
+  /** Placement: national (all cities) and/or specific city slugs. */
+  national?: boolean;
+  cities?: string[];
 }
 
-/** The single source of truth for all sponsors. */
 export const SPONSORS: Sponsor[] = [
   {
     id: "verde-colab",
@@ -33,17 +37,19 @@ export const SPONSORS: Sponsor[] = [
     address: "3514 Landis Ave, Unit 102, Sea Isle City, NJ 08243",
     featured: true,
     banner: true,
+    cities: ["sea-isle-city"],
   },
   {
     id: "burke-and-co",
     name: "Burke & Co.",
     category: "Real Estate · Rentals",
     tagline:
-      "A better real estate experience at the Shore — Sea Isle City home sales & vacation rentals.",
+      "A better real estate experience at the Shore — home sales & vacation rentals.",
     url: "https://johnburkeandco.com/",
     cta: "Browse listings",
     featured: true,
     banner: true,
+    cities: ["sea-isle-city"],
   },
   {
     id: "land-and-sea-furniture",
@@ -55,37 +61,39 @@ export const SPONSORS: Sponsor[] = [
     cta: "Shop furniture",
     featured: true,
     banner: true,
+    cities: ["sea-isle-city"],
   },
 ];
 
-/** Banner rotation pool (directory + restaurant detail pages). */
-export const BANNER_SPONSORS: Sponsor[] = SPONSORS.filter((s) => s.banner);
-
-/** Featured sponsors eligible to appear as in-grid sponsored cards. */
-export const GRID_SPONSORS: Sponsor[] = SPONSORS.filter((s) => s.featured);
-
-/** Everything shows on the /local directory. */
-export const LOCAL_BUSINESSES: Sponsor[] = SPONSORS;
-
 /** Insert an in-grid sponsored card after every N restaurant cards. */
 export const GRID_AD_INTERVAL = 8;
-
 /** Never show more than this many in-grid sponsored cards. */
 export const GRID_AD_MAX = 2;
 
-/**
- * Pick a banner sponsor. With a `seed` (e.g. a restaurant id) the choice is
- * deterministic and evenly distributed — each restaurant page consistently
- * shows one sponsor, and the three split the pages ~evenly. Without a seed it's
- * random.
- */
-/** Look up a specific sponsor by id (e.g. to pin the home banner). */
-export function getSponsor(id: string): Sponsor | null {
-  return SPONSORS.find((s) => s.id === id) ?? null;
+/** Sponsors that should appear in a given city (national + that city's locals). */
+export function sponsorsForCity(citySlug?: string | null): Sponsor[] {
+  return SPONSORS.filter(
+    (s) => s.national || (citySlug ? s.cities?.includes(citySlug) : false),
+  );
 }
 
-export function pickBannerSponsor(seed?: string | number): Sponsor | null {
-  const list = BANNER_SPONSORS;
+export function bannerSponsorsForCity(citySlug?: string | null): Sponsor[] {
+  return sponsorsForCity(citySlug).filter((s) => s.banner);
+}
+
+export function gridSponsorsForCity(citySlug?: string | null): Sponsor[] {
+  return sponsorsForCity(citySlug).filter((s) => s.featured);
+}
+
+/**
+ * Pick a banner sponsor for a city. With a `seed` (e.g. a restaurant id) the
+ * choice is deterministic + evenly distributed; without one it's random.
+ */
+export function pickBannerSponsor(
+  citySlug?: string | null,
+  seed?: string | number,
+): Sponsor | null {
+  const list = bannerSponsorsForCity(citySlug);
   if (!list.length) return null;
   if (seed === undefined || seed === null) {
     return list[Math.floor(Math.random() * list.length)];
