@@ -102,14 +102,14 @@ export function Directory({
         )}
       </div>
 
-      {/* Neighborhood filter (only for cities that define areas) */}
+      {/* Neighborhood filter (only for cities that define neighborhoods) */}
       {neighborhoods.length > 0 && (
         <div className="pt-5 flex flex-wrap gap-2 items-center">
           <span className="mr-1 text-[11px] font-semibold uppercase tracking-wide text-ink/40">
-            Area
+            Neighborhood
           </span>
           <FilterChip active={neighborhood === "all"} onClick={() => setNeighborhood("all")}>
-            All areas
+            All neighborhoods
           </FilterChip>
           {neighborhoods.map((n) => (
             <FilterChip

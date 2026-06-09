@@ -30,6 +30,7 @@ export const SHEET_COLUMNS = [
   "rating",
   "phone",
   "address",
+  "neighborhood",
   "accepts_cash",
   "accepts_cards",
   "online_ordering",
@@ -103,6 +104,7 @@ export function dbRowToSheetRow(r: Restaurant): SheetRow {
     rating: r.rating != null ? String(r.rating) : "",
     phone: r.phone ?? "",
     address: r.address ?? "",
+    neighborhood: "", // filled by the export route from neighborhood_id
     accepts_cash: r.accepts_cash == null ? "" : String(r.accepts_cash).toUpperCase(),
     accepts_cards: r.accepts_cards == null ? "" : String(r.accepts_cards).toUpperCase(),
     online_ordering: String(!!r.online_ordering).toUpperCase(),

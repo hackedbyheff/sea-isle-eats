@@ -46,6 +46,7 @@ Edit cells directly. Key columns:
 | `price_level` | `1`=$, `2`=$$, `3`=$$$, `4`=$$$$ |
 | `phone` | Phone number |
 | `address` | Street address |
+| `neighborhood` | (big cities only) the neighborhood name, e.g. `East Nashville` — must match one defined for that city |
 | `accepts_cards` | `TRUE` if they take cards, `FALSE` if cash-only |
 | `online_ordering` | `TRUE` / `FALSE` |
 | `dine_in` | `TRUE` / `FALSE` (sit-down available) |

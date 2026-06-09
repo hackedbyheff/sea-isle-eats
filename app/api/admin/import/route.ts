@@ -43,6 +43,17 @@ export async function POST(request: Request) {
     const byId = new Map<string, Restaurant>();
     for (const r of (existing as Restaurant[]) ?? []) byId.set(r.id, r);
 
+    // Resolve neighborhood by name or slug, scoped to each restaurant's city.
+    // Key: `${city_id}::${lowercased name-or-slug}` → neighborhood id.
+    const { data: nbs } = await supabase
+      .from("neighborhoods")
+      .select("id, city_id, slug, name");
+    const nbByKey = new Map<string, string>();
+    for (const n of (nbs as { id: string; city_id: string; slug: string; name: string }[]) ?? []) {
+      nbByKey.set(`${n.city_id}::${n.name.toLowerCase()}`, n.id);
+      nbByKey.set(`${n.city_id}::${n.slug.toLowerCase()}`, n.id);
+    }
+
     let updated = 0;
     let skipped = 0;
     const errors: string[] = [];
@@ -58,9 +69,23 @@ export async function POST(request: Request) {
         skipped++;
         continue;
       }
+
+      // Resolve the typed neighborhood (name or slug) within this row's city.
+      const update: Record<string, unknown> = { ...built.update };
+      if ("neighborhood" in row) {
+        const v = (row.neighborhood ?? "").trim();
+        if (v === "") {
+          update.neighborhood_id = null;
+        } else if (current.city_id) {
+          const nbId = nbByKey.get(`${current.city_id}::${v.toLowerCase()}`);
+          if (nbId) update.neighborhood_id = nbId;
+          else errors.push(`${row.name || row.id}: unknown neighborhood "${v}"`);
+        }
+      }
+
       const { error } = await supabase
         .from("restaurants")
-        .update({ ...built.update, locked_fields: built.locked_fields })
+        .update({ ...update, locked_fields: built.locked_fields })
         .eq("id", row.id);
       if (error) {
         errors.push(`${row.name || row.id}: ${error.message}`);

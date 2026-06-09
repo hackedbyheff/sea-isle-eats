@@ -31,7 +31,18 @@ export async function GET(request: Request) {
     const { data, error } = await q.order("name", { ascending: true });
     if (error) throw error;
 
-    const rows = (data as Restaurant[]).map(dbRowToSheetRow);
+    // Map neighborhood_id → name so the sheet shows a friendly value.
+    let nbq = supabase.from("neighborhoods").select("id, name");
+    if (city) nbq = nbq.eq("city_id", city.id);
+    const { data: nbs } = await nbq;
+    const nbName = new Map<string, string>(
+      (nbs ?? []).map((n: { id: string; name: string }) => [n.id, n.name]),
+    );
+
+    const rows = (data as Restaurant[]).map((r) => ({
+      ...dbRowToSheetRow(r),
+      neighborhood: r.neighborhood_id ? (nbName.get(r.neighborhood_id) ?? "") : "",
+    }));
     return NextResponse.json({ columns: SHEET_COLUMNS, rows });
   } catch (e) {
     return NextResponse.json(
