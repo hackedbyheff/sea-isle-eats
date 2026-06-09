@@ -27,16 +27,10 @@ export default async function Home({
 
   return (
     <div className="min-h-screen w-full bg-page text-ink">
-      {/* Header — Click Click Eat wordmark, city featured */}
+      {/* Header — Click Click Eat brand, city as the location line */}
       <header className="grain border-b-2 border-ink">
         <div className="mx-auto max-w-5xl px-5 pt-8 pb-7">
-          <div className="flex items-center justify-between gap-2 mb-3">
-            <Link
-              href="/"
-              className="font-display text-lg font-semibold text-coral leading-none"
-            >
-              {BRAND_NAME}
-            </Link>
+          <div className="flex items-center justify-end mb-2">
             <Link
               href="/local"
               className="text-xs font-semibold uppercase tracking-wide text-ink/50 hover:text-coral"
@@ -44,12 +38,12 @@ export default async function Home({
               Sponsors →
             </Link>
           </div>
-          <div className="flex items-center gap-2 text-coral font-semibold tracking-[0.2em] uppercase text-xs mb-1">
-            <MapPin size={14} /> {place}
-          </div>
-          <h1 className="font-display text-5xl sm:text-6xl leading-[0.95] font-semibold">
-            {city.name}
+          <h1 className="font-display text-5xl sm:text-6xl leading-[0.95] font-semibold text-coral">
+            {BRAND_NAME}
           </h1>
+          <div className="mt-2 flex items-center gap-2 text-coral font-semibold tracking-[0.18em] uppercase text-sm sm:text-base">
+            <MapPin size={17} /> {place}
+          </div>
           <p className="mt-3 max-w-xl text-ink/70 text-lg font-light">
             Every kitchen in {city.name} — who&apos;s open, who takes cards, and
             who you can order from direct.
