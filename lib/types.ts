@@ -6,6 +6,31 @@
 
 export type ListingStatus = "unverified" | "needs_call" | "verified";
 
+/** A market (city) the platform serves. */
+export interface City {
+  id: string;
+  slug: string;
+  name: string;
+  state: string | null;
+  search_query: string | null;
+  zips: string[];
+  timezone: string;
+  lat: number | null;
+  lng: number | null;
+  active: boolean;
+  created_at: string;
+}
+
+/** An optional sub-area within a city (big cities only). */
+export interface Neighborhood {
+  id: string;
+  city_id: string;
+  slug: string;
+  name: string;
+  active: boolean;
+  created_at: string;
+}
+
 /** One open range on a given day, 24h clock, "HH:MM" in America/New_York. */
 export type HoursRange = [string, string];
 
@@ -45,6 +70,9 @@ export interface Restaurant {
   notes: string | null; // internal call-log / admin notes (not public)
   status: ListingStatus;
   published: boolean;
+  /** Market + optional sub-area this listing belongs to. */
+  city_id: string | null;
+  neighborhood_id: string | null;
   /** True once an owner/manager has claimed the listing and confirmed its info. */
   owner_verified: boolean;
   /** Field names a human edited; the Google sync must skip these columns. */

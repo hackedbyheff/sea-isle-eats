@@ -49,6 +49,8 @@ function make(partial: Partial<Restaurant> & Pick<Restaurant, "id" | "name">): R
     status: "verified",
     published: true,
     featured: false,
+    city_id: "sample-sea-isle",
+    neighborhood_id: null,
     owner_verified: false,
     locked_fields: [],
     last_verified_at: NOW,
