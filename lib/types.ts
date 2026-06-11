@@ -63,6 +63,7 @@ export interface Restaurant {
   byob: boolean | null;
   catering: boolean | null;
   catering_url: string | null; // first-party catering order/info link
+  beach_delivery: boolean | null; // delivers to the beach (shore towns)
   menu_url: string | null;
   order_url: string | null;
   website_url: string | null;

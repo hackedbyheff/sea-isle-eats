@@ -183,6 +183,11 @@ export function ListingEditor({
               label="Catering"
               onClick={() => set("catering", !draft.catering)}
             />
+            <Toggle
+              on={!!draft.beach_delivery}
+              label="Delivers to beach"
+              onClick={() => set("beach_delivery", !draft.beach_delivery)}
+            />
           </div>
 
           <Field label="Menu link (FB / Insta / website)">

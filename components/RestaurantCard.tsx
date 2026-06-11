@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Phone, Clock, CreditCard, Banknote, ShoppingBag, Star, BadgeCheck, Facebook, Instagram, Utensils, Package, Car, Wine, ChefHat } from "lucide-react";
+import { Phone, Clock, CreditCard, Banknote, ShoppingBag, Star, BadgeCheck, Facebook, Instagram, Utensils, Package, Car, Wine, ChefHat, Umbrella } from "lucide-react";
 import type { Restaurant } from "@/lib/types";
 import { priceLabel, parseCuisines } from "@/lib/format";
 import { isOpenNow, todayHoursLabel, type NowInET } from "@/lib/hours";
@@ -111,6 +111,11 @@ export function RestaurantCard({
         {r.catering && (
           <Badge tone="sand">
             <ChefHat size={12} /> Catering
+          </Badge>
+        )}
+        {r.beach_delivery && (
+          <Badge tone="teal">
+            <Umbrella size={12} /> Beach delivery
           </Badge>
         )}
       </div>

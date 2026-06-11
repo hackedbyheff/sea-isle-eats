@@ -40,6 +40,7 @@ export function coerceFieldValue(field: string, value: string): unknown {
     case "dine_in":
     case "takeout":
     case "delivery":
+    case "beach_delivery":
     case "published":
     case "featured":
       return value === "true" || value === "1" || value.toLowerCase() === "yes";

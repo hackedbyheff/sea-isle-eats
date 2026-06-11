@@ -19,6 +19,7 @@ import {
   Car,
   Wine,
   ChefHat,
+  Umbrella,
 } from "lucide-react";
 import { getRestaurantById } from "@/lib/data";
 import { cityUrl, getCurrentCity } from "@/lib/cities";
@@ -245,6 +246,11 @@ export default async function RestaurantDetail({
           {r.catering && (
             <Badge tone="sand">
               <ChefHat size={12} /> Catering
+            </Badge>
+          )}
+          {r.beach_delivery && (
+            <Badge tone="teal">
+              <Umbrella size={12} /> Beach delivery
             </Badge>
           )}
         </div>

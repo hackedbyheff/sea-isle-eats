@@ -41,6 +41,7 @@ const EDITABLE_COLUMNS = [
   "byob",
   "catering",
   "catering_url",
+  "beach_delivery",
   "menu_url",
   "order_url",
   "website_url",
