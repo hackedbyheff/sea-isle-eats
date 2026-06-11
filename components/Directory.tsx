@@ -111,6 +111,21 @@ export function Directory({
 
       {/* Filters: neighborhood (if any) · cuisine · attributes — labeled sections */}
       <div className="py-5 space-y-4">
+        <div>
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-ink/40 mb-1.5">
+            Cuisine
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {cuisines.map((c) => (
+              <FilterChip key={c} active={cuisine === c} onClick={() => setCuisine(c)}>
+                {c}
+              </FilterChip>
+            ))}
+          </div>
+        </div>
+
+        <hr className="border-ink/10" />
+
         {neighborhoods.length > 0 && (
           <div>
             <div className="text-[11px] font-semibold uppercase tracking-wide text-ink/40 mb-1.5">
@@ -132,21 +147,6 @@ export function Directory({
             </div>
           </div>
         )}
-
-        <div>
-          <div className="text-[11px] font-semibold uppercase tracking-wide text-ink/40 mb-1.5">
-            Cuisine
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {cuisines.map((c) => (
-              <FilterChip key={c} active={cuisine === c} onClick={() => setCuisine(c)}>
-                {c}
-              </FilterChip>
-            ))}
-          </div>
-        </div>
-
-        <hr className="border-ink/10" />
 
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-wide text-ink/40 mb-1.5">
