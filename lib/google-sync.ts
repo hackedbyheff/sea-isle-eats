@@ -104,6 +104,7 @@ export function mapPlaceToColumns(details: PlaceDetails): Record<string, unknown
   if (details.location?.longitude != null) out.lng = details.location.longitude;
   if (details.nationalPhoneNumber) out.phone = details.nationalPhoneNumber;
   if (details.rating != null) out.rating = details.rating;
+  if (details.userRatingCount != null) out.rating_count = details.userRatingCount;
 
   if (details.priceLevel && PRICE_MAP[details.priceLevel] != null) {
     out.price_level = PRICE_MAP[details.priceLevel];

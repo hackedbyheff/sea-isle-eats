@@ -49,6 +49,7 @@ export interface Restaurant {
   cuisine: string | null;
   price_level: number | null; // 1=$ 2=$$ 3=$$$ 4=$$$$
   rating: number | null;
+  rating_count: number | null; // # of Google reviews (powers weighted ranking)
   phone: string | null;
   address: string | null;
   lat: number | null;

@@ -16,6 +16,7 @@ const DETAILS_FIELD_MASK = [
   "nationalPhoneNumber",
   "regularOpeningHours",
   "rating",
+  "userRatingCount",
   "priceLevel",
   "paymentOptions",
   "dineIn",
@@ -38,6 +39,7 @@ export interface PlaceDetails {
     }[];
   };
   rating?: number;
+  userRatingCount?: number;
   priceLevel?: string;
   paymentOptions?: {
     acceptsCreditCards?: boolean;

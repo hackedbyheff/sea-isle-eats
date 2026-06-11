@@ -55,37 +55,77 @@ export function Directory({
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return restaurants
-      .filter((r) => {
-        if (q && !r.name.toLowerCase().includes(q) && !(r.cuisine ?? "").toLowerCase().includes(q))
-          return false;
-        if (cuisine !== "All" && !parseCuisines(r.cuisine).includes(cuisine)) return false;
-        if (cardsOnly && r.accepts_cards !== true) return false;
-        if (cashOnly && r.accepts_cards !== false) return false;
-        if (onlineOnly && !r.online_ordering) return false;
-        if (deliveryOnly && r.delivery !== true) return false;
-        if (byobOnly && r.byob !== true) return false;
-        if (beachOnly && r.beach_delivery !== true) return false;
-        if (neighborhood !== "all" && r.neighborhood_id !== neighborhood) return false;
-        if (openNow && !(now && isOpenNow(r.hours, now))) return false;
-        if (lateNight && !(now && isLateNightOn(r.hours, now.day))) return false;
-        return true;
-      })
-      .sort((a, b) => {
-        // 1) Featured (sponsored) first
-        const feat = (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
-        if (feat) return feat;
-        // 2) Open now before closed (only once we know the ET time)
-        if (now) {
-          const open = (isOpenNow(b.hours, now) ? 1 : 0) - (isOpenNow(a.hours, now) ? 1 : 0);
-          if (open) return open;
-        }
-        // 3) Higher rating first (unrated last)
-        const rating = (b.rating ?? -1) - (a.rating ?? -1);
-        if (rating) return rating;
-        // 4) Alphabetical tiebreaker
-        return a.name.localeCompare(b.name);
-      });
+    const base = restaurants.filter((r) => {
+      if (q && !r.name.toLowerCase().includes(q) && !(r.cuisine ?? "").toLowerCase().includes(q))
+        return false;
+      if (cuisine !== "All" && !parseCuisines(r.cuisine).includes(cuisine)) return false;
+      if (cardsOnly && r.accepts_cards !== true) return false;
+      if (cashOnly && r.accepts_cards !== false) return false;
+      if (onlineOnly && !r.online_ordering) return false;
+      if (deliveryOnly && r.delivery !== true) return false;
+      if (byobOnly && r.byob !== true) return false;
+      if (beachOnly && r.beach_delivery !== true) return false;
+      if (neighborhood !== "all" && r.neighborhood_id !== neighborhood) return false;
+      if (openNow && !(now && isOpenNow(r.hours, now))) return false;
+      if (lateNight && !(now && isLateNightOn(r.hours, now.day))) return false;
+      return true;
+    });
+
+    // Weighted "local favorites" score (Bayesian): blends star rating with how
+    // many reviews back it up, so a 4.6 with 800 reviews beats a 5.0 with 4.
+    const rated = base.filter((r) => r.rating != null);
+    const C = rated.length
+      ? rated.reduce((s, r) => s + (r.rating ?? 0), 0) / rated.length
+      : 4.2;
+    const M = 30; // review weight: below this, the score leans toward the mean
+    const score = (r: Restaurant) => {
+      const v = r.rating_count ?? 0;
+      const R = r.rating ?? C;
+      return (v / (v + M)) * R + (M / (v + M)) * C;
+    };
+    const isOpen = (r: Restaurant) => (now ? isOpenNow(r.hours, now) : false);
+
+    // Rank by score within tiers (featured → open → closed).
+    const ranked = [...base].sort((a, b) => {
+      const feat = (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+      if (feat) return feat;
+      if (now) {
+        const open = (isOpen(b) ? 1 : 0) - (isOpen(a) ? 1 : 0);
+        if (open) return open;
+      }
+      const s = score(b) - score(a);
+      if (s) return s;
+      return a.name.localeCompare(b.name);
+    });
+
+    // Cuisine variety: within a tier, avoid long runs of the same cuisine by
+    // greedily picking the highest-ranked spot whose cuisine differs from the
+    // previous one.
+    const primary = (r: Restaurant) => (parseCuisines(r.cuisine)[0] ?? "").toLowerCase();
+    const diversify = (items: Restaurant[]) => {
+      const rem = [...items];
+      const out: Restaurant[] = [];
+      let last: string | null = null;
+      while (rem.length) {
+        let i = rem.findIndex((r) => primary(r) !== last);
+        if (i < 0) i = 0;
+        const [picked] = rem.splice(i, 1);
+        out.push(picked);
+        last = primary(picked);
+      }
+      return out;
+    };
+
+    const feat = ranked.filter((r) => r.featured);
+    const rest = ranked.filter((r) => !r.featured);
+    if (now) {
+      return [
+        ...diversify(feat),
+        ...diversify(rest.filter(isOpen)),
+        ...diversify(rest.filter((r) => !isOpen(r))),
+      ];
+    }
+    return [...diversify(feat), ...diversify(rest)];
   }, [restaurants, query, cuisine, cardsOnly, cashOnly, onlineOnly, deliveryOnly, byobOnly, beachOnly, neighborhood, openNow, lateNight, now]);
 
   return (

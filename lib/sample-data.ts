@@ -27,6 +27,7 @@ function make(partial: Partial<Restaurant> & Pick<Restaurant, "id" | "name">): R
     cuisine: null,
     price_level: null,
     rating: null,
+    rating_count: null,
     phone: null,
     address: null,
     lat: null,
