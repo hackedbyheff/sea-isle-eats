@@ -19,7 +19,7 @@ import {
   Car,
   Wine,
   ChefHat,
-  Waves,
+  Sun,
 } from "lucide-react";
 import { getRestaurantById } from "@/lib/data";
 import { cityUrl, getCurrentCity } from "@/lib/cities";
@@ -250,7 +250,7 @@ export default async function RestaurantDetail({
           )}
           {r.beach_delivery && (
             <Badge tone="teal">
-              <Waves size={12} /> Beach Delivery
+              <Sun size={12} /> Beach Delivery
             </Badge>
           )}
         </div>
