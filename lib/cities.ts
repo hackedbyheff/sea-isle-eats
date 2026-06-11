@@ -48,10 +48,18 @@ export function resolveCitySlug(
   return null;
 }
 
-/** Canonical public URL for a city (custom domain if any, else subdomain). */
+/**
+ * Public URL for a city:
+ *  - custom domain if one is mapped (e.g. siceats.com)
+ *  - else the platform apex with a ?city= param (works today, no wildcard DNS)
+ *
+ * Once the wildcard *.clickclickeat.com is set up in Netlify, switch the else
+ * branch back to `https://${city.slug}.${PLATFORM_DOMAIN}` for clean subdomains.
+ */
 export function cityUrl(city: City): string {
   const custom = CITY_CUSTOM_DOMAIN[city.slug];
-  return custom ? `https://${custom}` : `https://${city.slug}.${PLATFORM_DOMAIN}`;
+  if (custom) return `https://${custom}`;
+  return `https://${PLATFORM_DOMAIN}/?city=${city.slug}`;
 }
 
 export async function getActiveCities(): Promise<City[]> {
