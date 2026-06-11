@@ -107,58 +107,75 @@ export function Directory({
         )}
       </div>
 
-      {/* Neighborhood filter (only for cities that define neighborhoods) */}
-      {neighborhoods.length > 0 && (
-        <div className="pt-5 flex flex-wrap gap-2 items-center">
-          <span className="mr-1 text-[11px] font-semibold uppercase tracking-wide text-ink/40">
-            Neighborhood
-          </span>
-          <FilterChip active={neighborhood === "all"} onClick={() => setNeighborhood("all")}>
-            All neighborhoods
-          </FilterChip>
-          {neighborhoods.map((n) => (
-            <FilterChip
-              key={n.id}
-              active={neighborhood === n.id}
-              onClick={() => setNeighborhood(n.id)}
-            >
-              {n.name}
-            </FilterChip>
-          ))}
-        </div>
-      )}
-
-      {/* Filters */}
-      <div className="py-5 flex flex-wrap gap-2 items-center">
-        {cuisines.map((c) => (
-          <FilterChip key={c} active={cuisine === c} onClick={() => setCuisine(c)}>
-            {c}
-          </FilterChip>
-        ))}
-        <span className="mx-1 h-5 w-px bg-ink/20" />
-        <FilterChip active={openNow} onClick={() => setOpenNow(!openNow)}>
-          Open Now
-        </FilterChip>
-        <FilterChip active={cardsOnly} onClick={() => setCardsOnly(!cardsOnly)}>
-          Takes Cards
-        </FilterChip>
-        <FilterChip active={onlineOnly} onClick={() => setOnlineOnly(!onlineOnly)}>
-          Online Ordering
-        </FilterChip>
-        <FilterChip active={lateNight} onClick={() => setLateNight(!lateNight)}>
-          Late Night
-        </FilterChip>
-        <FilterChip active={deliveryOnly} onClick={() => setDeliveryOnly(!deliveryOnly)}>
-          Delivery
-        </FilterChip>
-        <FilterChip active={byobOnly} onClick={() => setByobOnly(!byobOnly)}>
-          BYOB
-        </FilterChip>
-        {showBeach && (
-          <FilterChip active={beachOnly} onClick={() => setBeachOnly(!beachOnly)}>
-            Beach delivery
-          </FilterChip>
+      {/* Filters: neighborhood (if any) · cuisine · attributes — labeled sections */}
+      <div className="py-5 space-y-4">
+        {neighborhoods.length > 0 && (
+          <div>
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-ink/40 mb-1.5">
+              Neighborhood
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <FilterChip active={neighborhood === "all"} onClick={() => setNeighborhood("all")}>
+                All Neighborhoods
+              </FilterChip>
+              {neighborhoods.map((n) => (
+                <FilterChip
+                  key={n.id}
+                  active={neighborhood === n.id}
+                  onClick={() => setNeighborhood(n.id)}
+                >
+                  {n.name}
+                </FilterChip>
+              ))}
+            </div>
+          </div>
         )}
+
+        <div>
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-ink/40 mb-1.5">
+            Cuisine
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {cuisines.map((c) => (
+              <FilterChip key={c} active={cuisine === c} onClick={() => setCuisine(c)}>
+                {c}
+              </FilterChip>
+            ))}
+          </div>
+        </div>
+
+        <hr className="border-ink/10" />
+
+        <div>
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-ink/40 mb-1.5">
+            Good to Know
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <FilterChip active={openNow} onClick={() => setOpenNow(!openNow)}>
+              Open Now
+            </FilterChip>
+            <FilterChip active={cardsOnly} onClick={() => setCardsOnly(!cardsOnly)}>
+              Takes Cards
+            </FilterChip>
+            <FilterChip active={onlineOnly} onClick={() => setOnlineOnly(!onlineOnly)}>
+              Online Ordering
+            </FilterChip>
+            <FilterChip active={lateNight} onClick={() => setLateNight(!lateNight)}>
+              Late Night
+            </FilterChip>
+            <FilterChip active={deliveryOnly} onClick={() => setDeliveryOnly(!deliveryOnly)}>
+              Delivery
+            </FilterChip>
+            <FilterChip active={byobOnly} onClick={() => setByobOnly(!byobOnly)}>
+              BYOB
+            </FilterChip>
+            {showBeach && (
+              <FilterChip active={beachOnly} onClick={() => setBeachOnly(!beachOnly)}>
+                Beach Delivery
+              </FilterChip>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Banner ad slot — sponsors for this city (rotates) */}

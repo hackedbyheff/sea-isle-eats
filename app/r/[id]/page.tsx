@@ -19,7 +19,7 @@ import {
   Car,
   Wine,
   ChefHat,
-  Umbrella,
+  Waves,
 } from "lucide-react";
 import { getRestaurantById } from "@/lib/data";
 import { cityUrl, getCurrentCity } from "@/lib/cities";
@@ -114,7 +114,7 @@ export default async function RestaurantDetail({
             {r.owner_verified && (
               <div className="mt-2">
                 <Badge tone="teal">
-                  <BadgeCheck size={12} /> Owner-verified
+                  <BadgeCheck size={12} /> Owner-Verified
                 </Badge>
               </div>
             )}
@@ -213,7 +213,7 @@ export default async function RestaurantDetail({
           )}
           {r.accepts_cards === false && (
             <Badge tone="muted">
-              <Banknote size={12} /> Cash only
+              <Banknote size={12} /> Cash Only
             </Badge>
           )}
           {r.online_ordering ? (
@@ -221,7 +221,7 @@ export default async function RestaurantDetail({
               <ShoppingBag size={12} /> Order Online
             </Badge>
           ) : (
-            <Badge tone="muted">No online ordering</Badge>
+            <Badge tone="muted">No Online Ordering</Badge>
           )}
           {r.dine_in && (
             <Badge tone="sand">
@@ -250,7 +250,7 @@ export default async function RestaurantDetail({
           )}
           {r.beach_delivery && (
             <Badge tone="teal">
-              <Umbrella size={12} /> Beach delivery
+              <Waves size={12} /> Beach Delivery
             </Badge>
           )}
         </div>
