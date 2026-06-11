@@ -27,6 +27,7 @@ export function Directory({
   const [cuisine, setCuisine] = useState("All");
   const [openNow, setOpenNow] = useState(false);
   const [cardsOnly, setCardsOnly] = useState(false);
+  const [cashOnly, setCashOnly] = useState(false);
   const [onlineOnly, setOnlineOnly] = useState(false);
   const [lateNight, setLateNight] = useState(false);
   const [deliveryOnly, setDeliveryOnly] = useState(false);
@@ -60,6 +61,7 @@ export function Directory({
           return false;
         if (cuisine !== "All" && !parseCuisines(r.cuisine).includes(cuisine)) return false;
         if (cardsOnly && r.accepts_cards !== true) return false;
+        if (cashOnly && r.accepts_cards !== false) return false;
         if (onlineOnly && !r.online_ordering) return false;
         if (deliveryOnly && r.delivery !== true) return false;
         if (byobOnly && r.byob !== true) return false;
@@ -84,7 +86,7 @@ export function Directory({
         // 4) Alphabetical tiebreaker
         return a.name.localeCompare(b.name);
       });
-  }, [restaurants, query, cuisine, cardsOnly, onlineOnly, deliveryOnly, byobOnly, beachOnly, neighborhood, openNow, lateNight, now]);
+  }, [restaurants, query, cuisine, cardsOnly, cashOnly, onlineOnly, deliveryOnly, byobOnly, beachOnly, neighborhood, openNow, lateNight, now]);
 
   return (
     <>
@@ -156,6 +158,9 @@ export function Directory({
             </FilterChip>
             <FilterChip active={cardsOnly} onClick={() => setCardsOnly(!cardsOnly)}>
               Takes Cards
+            </FilterChip>
+            <FilterChip active={cashOnly} onClick={() => setCashOnly(!cashOnly)}>
+              Cash Only
             </FilterChip>
             <FilterChip active={onlineOnly} onClick={() => setOnlineOnly(!onlineOnly)}>
               Online Ordering
