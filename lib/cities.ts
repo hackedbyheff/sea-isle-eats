@@ -59,7 +59,7 @@ export function resolveCitySlug(
 export function cityUrl(city: City): string {
   const custom = CITY_CUSTOM_DOMAIN[city.slug];
   if (custom) return `https://${custom}`;
-  return `https://${PLATFORM_DOMAIN}/?city=${city.slug}`;
+  return `https://${PLATFORM_DOMAIN}/${city.slug}`;
 }
 
 export async function getActiveCities(): Promise<City[]> {
